@@ -6,8 +6,6 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
 
-
-
 const app = express();
 const port = 3000;
 const saltRounds = 10;
@@ -21,116 +19,122 @@ const db = new pg.Client({
     port: 5433,
 });
 
-
 db.connect();
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('public'));
+
+//Session
+app.use(
+    session({
+        secret: "TOPSECRET",
+        resave: false,
+        saveUninitialized: true, 
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Render Login Page
 app.get("/", async (req, res) => {
     res.render("login.ejs");
 });
 
-//Render Home Page
+//Render Home Page & Check for Authentication
 app.get("/home", (req, res) => {
+    if (req.isAuthenticated()) {
     res.render("home.ejs");
+    } else {
+        res.redirect("/")
+    }
 });
 
 //Render Customer Portal Page & Pull Data from DB to Display
 app.get("/customer", async (req, res) => {
-    try {
-        const customerData = await db.query("SELECT * FROM customers");
-        res.render("customerportal.ejs", {customerData: customerData.rows});
-    } catch (err) {
-        console.error("Error feting customers:", err);
-        res.status(500).send("Internal Server Error");
-    }
-   
+    if (req.isAuthenticated()) {
+        try {
+            const customerData = await db.query("SELECT * FROM customers");
+            res.render("customerportal.ejs", {customerData: customerData.rows});
+        } catch (err) {
+            console.error("Error feting customers:", err);
+            res.status(500).send("Internal Server Error");
+        }} else {
+            res.redirect("/")
+        }
 });
 
 //Render Admin Page
 app.get("/admin", (req, res) => {
-    res.render("admin.ejs");
+    if (req.isAuthenticated()) {
+        res.render("admin.ejs");
+        } else {
+            res.redirect("/")
+        }
 });
-
-//Render Customer Page
-app.get("/customer", (req, res) => {
-    res.render("customerportal.ejs");
-})
 
 //Render NewSub Page
 app.get("/newsubcontractor", (req, res) => {
-    res.render("newsubcontractor.ejs");
+    if (req.isAuthenticated()) {
+        res.render("newsubcontractor.ejs");
+        } else {
+            res.redirect("/")
+        }
 });
 
 //Render NewCustomer Page
 app.get("/newcustomer", (req, res) => {
-    res.render("newcustomer.ejs");
+    if (req.isAuthenticated()) {
+        res.render("newcustomer.ejs");
+        } else {
+            res.redirect("/")
+        }
 });
 
 //Render NewProject Page
 app.get("/newproject", (req, res) => {
-    res.render("newproject.ejs");
+    if (req.isAuthenticated()) {
+        res.render("newproject.ejs");
+        } else {
+            res.redirect("/")
+        }
 });
 
-//Render Subcontractor Portal Page & Pull Data from DB to Display
+//Render Subcontractor Portal Page, Check Auth, Pull data from DB to display. 
 app.get("/subcontractor", async (req, res) => {
+    if (req.isAuthenticated()){
     try {
         const subData = await db.query("SELECT * FROM subcontractors");
         res.render("subcontractorportal.ejs", {subData: subData.rows});
     } catch (err) {
         console.error("Error fetching subcontractors:", err);
         res.status(500).send("Internal Server Error");
+    }} else {
+        res.redirect("/")
     }
    
 });
 
 //Render Projects and Fetch Projects from DB
 app.get("/projects", async (req, res) => {
+    if (req.isAuthenticated()){
     try {
         const projectData = await db.query("SELECT * FROM projects");
         res.render("projects.ejs", {projectData: projectData.rows});
     } catch (err) {
         console.error("Error feting subcontractors:", err);
         res.status(500).send("Internal Server Error");
+    }} else {
+        res.redirect("/")
     }
    
 });
 
-//Login Process - Username and Password Verification with DB
-app.post("/", async (req, res) => {
-    const email = req.body.username;
-    const loginPassword = req.body.password;
-
-    try {
-        const result = await db.query("SELECT * FROM users WHERE email = $1", [
-            email,
-        ]);
-//Check loginPassword with saved Hashed Password
-        if (result.rows.length > 0) {
-            const user = result.rows[0];
-            const storedHashedPassword = user.password;
-
-            bcrypt.compare(loginPassword, storedHashedPassword, (err, result) =>{
-                if (err) {
-                    console.log("Error comparing password", err);
-                } else {
-                    if (result) {
-                        res.render("home.ejs");
-                    } else {
-                        res.send("Incorrect Password");
-                    }
-                }
-            });
-        } else {
-            res.send("User not found");
-        }
-        
-    } catch (err) {
-        console.log(err);
-    }
-});
+//
+app.post("/",passport.authenticate("local", {
+    successRedirect: "/home",
+    failureRedirect: ""
+}));
 
 //Passing Data from Admin Page to Create New User Info
 app.post("/admin", async (req, res) => {
@@ -236,6 +240,45 @@ app.post("/newproject", async (req, res) => {
             res.status(500).json({ error: 'An unexpected error occurred. Please try again later.' });
         }
     }
+});
+
+//User Session Auth
+passport.use(
+    new Strategy(async function verify(username, password, cb){
+    try {
+        const result = await db.query("SELECT * FROM users WHERE email = $1", [
+            username,
+        ]);
+//Check loginPassword with saved Hashed Password
+        if (result.rows.length > 0) {
+            const user = result.rows[0];
+            const storedHashedPassword = user.password;
+            bcrypt.compare(password, storedHashedPassword, (err, result) =>{
+                if (err) {
+                    return cb(err)
+                } else {
+                    if (result) {
+                        return cb(null, user)
+                    } else {
+                        return cb(null, false)
+                    }
+                }
+            });
+        } else {
+            return cb("User Not Found")
+        }
+        
+    } catch (err) {
+        console.log(err);
+    }
+}));
+
+passport.serializeUser((user, cb) => {
+    cb(null, user);
+});
+
+passport.deserializeUser((user, cb) => {
+    cb(null, user);
 });
 
 //Console Log Port
