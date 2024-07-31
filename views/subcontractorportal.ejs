@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NXL Subcontractor Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body>
+    <%- include("sidebar.ejs") %>
+        <h1 class="content text-center">Subcontractor Portal</h1>
+
+        
+    <div class="d-flex gap-2 justify-content-left py-5 content" >
+        <a href="/newsubcontractor"><button class="btn btn-primary d-inline-flex align-items-center" type="button">
+          Add New Subcontractor
+          <svg class="bi ms-1 " width="20" height="20"><use xlink:href="#arrow-right-short"></use></svg>
+        </button></a>
+    </div>
+    <div class="d-flex">
+        <input type="text" id="searchInput" class="form-control search-bar content" placeholder="Search by sub name" style="width:100%;">
+    </div>
+    <div class=" d-flex">
+        <table class="table content table-auto table-striped table-hover" style="table-layout: auto; width:100%;">
+          <thead>
+            <tr>
+              <th>Subcontractor Name</th>
+              <th>Address</th>
+              <th>City</th>
+              <th>State</th>
+              <th>ZIP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% subData.forEach(function(subData) { %>
+              <tr>
+                <td><%= subData.subname %></td>
+                <td><%= subData.subaddress %></td>
+                <td><%= subData.subcity %></td>
+                <td><%= subData.substate %></td>
+                <td><%= subData.subzip %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+    </div>
+
+
+        <script>
+            // Search functionality
+            document.getElementById("searchInput").addEventListener("keyup", function() {
+              var input, filter, table, tr, td, i, txtValue;
+              input = document.getElementById("searchInput");
+              filter = input.value.toUpperCase();
+              table = document.querySelector(".table");
+              tr = table.getElementsByTagName("tr");
+        
+              // Loop through all table rows, and hide those that don't match the search query
+              for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0]; 
+                if (td) {
+                  txtValue = td.textContent || td.innerText;
+                  if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                  } else {
+                    tr[i].style.display = "none";
+                  }
+                }
+              }
+            });
+          </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
+
+</html>

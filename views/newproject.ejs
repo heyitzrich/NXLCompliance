@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Maintenance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <%- include("sidebar.ejs") %>
+</head>
+<body>
+    <h1 class="content text-center">Project Maintenance</h1>
+    <hr>
+    <form action="/newproject" method="Post" class="content" id="myForm">
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="inputProjectNumber">Project Number</label>
+            <input type="text" class="form-control" id="inputProjectNumber" name="projectNumber">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="inputDirNumber">DIR Number</label>
+            <input type="text" class="form-control" id="inputDirNumber"  name="dirNumber">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="inputProjectManager">Project Manager</label>
+            <input type="text" class="form-control" id="inputProjectManager" name="projectManager">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="inputProjectContract">Contract/PO</label>
+            <input type="text" class="form-control" id="inputProjectContract" name="projectContract">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="inputProjectName">Project Name</label>
+            <input type="text" class="form-control" id="inputProjectName" name="projectName">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="inputProjectAddress">Project Address</label>
+            <input type="text" class="form-control" id="inputProjectAddress" name="projectAddress">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="inputSubCity">Project City</label>
+            <input type="text" class="form-control" id="inputProjectCity" name="projectCity">
+          </div>
+          <div class="form-group col-md-2">
+            <label for="inputProjectState">State</label>
+            <select id="inputState" class="form-control" name="projectState">
+              <option selected>Choose...</option>
+              <option value="AL">Alabama</option>
+              <option value="AK">Alaska</option>
+              <option value="AZ">Arizona</option>
+              <option value="AR">Arkansas</option>
+              <option value="CA" selected>California</option>
+              <option value="CO">Colorado</option>
+              <option value="CT">Connecticut</option>
+              <option value="DE">Delaware</option>
+              <option value="DC">District of Columbia</option>
+              <option value="FL">Florida</option>
+              <option value="GA">Georgia</option>
+              <option value="HI">Hawaii</option>
+              <option value="ID">Idaho</option>
+              <option value="IL">Illinois</option>
+              <option value="IN">Indiana</option>
+              <option value="IA">Iowa</option>
+              <option value="KS">Kansas</option>
+              <option value="KY">Kentucky</option>
+              <option value="LA">Louisiana</option>
+              <option value="ME">Maine</option>
+              <option value="MD">Maryland</option>
+              <option value="MA">Massachusetts</option>
+              <option value="MI">Michigan</option>
+              <option value="MN">Minnesota</option>
+              <option value="MS">Mississippi</option>
+              <option value="MO">Missouri</option>
+              <option value="MT">Montana</option>
+              <option value="NE">Nebraska</option>
+              <option value="NV">Nevada</option>
+              <option value="NH">New Hampshire</option>
+              <option value="NJ">New Jersey</option>
+              <option value="NM">New Mexico</option>
+              <option value="NY">New York</option>
+              <option value="NC">North Carolina</option>
+              <option value="ND">North Dakota</option>
+              <option value="OH">Ohio</option>
+              <option value="OK">Oklahoma</option>
+              <option value="OR">Oregon</option>
+              <option value="PA">Pennsylvania</option>
+              <option value="RI">Rhode Island</option>
+              <option value="SC">South Carolina</option>
+              <option value="SD">South Dakota</option>
+              <option value="TN">Tennessee</option>
+              <option value="TX">Texas</option>
+              <option value="UT">Utah</option>
+              <option value="VT">Vermont</option>
+              <option value="VA">Virginia</option>
+              <option value="WA">Washington</option>
+              <option value="WV">West Virginia</option>
+              <option value="WI">Wisconsin</option>
+              <option value="WY">Wyoming</option>
+              <option value="AS">American Samoa</option>
+              <option value="GU">Guam</option>
+              <option value="MP">Northern Mariana Islands</option>
+              <option value="PR">Puerto Rico</option>
+              <option value="UM">United States Minor Outlying Islands</option>
+              <option value="VI">Virgin Islands</option>
+              <option value="NA">Not a US City</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2 mb-3">
+            <label for="inputProjectZip">Zip</label>
+            <input type="text" class="form-control" id="inputProjectZip" name="projectZip">
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="form-group col-md-3">
+            <select class="form-select-sm" id="inputProjectTracking" name="projectTracking">
+              <label for="inputProjectTracking">Tracking</label>
+              <option selected>Select an Option</option>
+              <option value="DIR Only">DIR Only</option>
+              <option value="DIR & LCP">DIR & LCP</option>
+              <option value="DIR, LCP, & NXL Dropbox">DIR, LCP, & NXL Dropbox</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3 mb-3">
+            <select class="form-select-sm" id="inputProjectPortal" name="projectPortal">
+              <label for="inputProjectPortal">LCP Portal</label>
+              <option selected>Select an Option</option>
+              <option value="Align Builders Inc.">Align Builders Inc.</option>
+              <option value="Balfour Beatty Construction">Balfour Beatty Construction</option>
+              <option value="Barnhart-Reese Construction, Inc.">Barnhart-Reese Construction, Inc.</option>
+              <option value="BNBuilders, Inc.">BNBuilders, Inc.</option>
+              <option value="Calleguas Municipal Water District">Calleguas Municipal Water District</option>
+              <option value="DPR Construction">DPR Construction</option>
+              <option value="Engie Services">Engie Services</option>
+              <option value="Erickson-Hall Construction">Erickson-Hall Construction</option>
+              <option value="Los Angeles Community College District">Los Angeles Community College District</option>
+              <option value="Los Angeles County">Los Angeles County</option>
+              <option value="Los Angeles County Joint">Los Angeles County Joint</option>
+              <option value="Los Angeles County Metro">Los Angeles County Metro</option>
+            </select>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary mb-4">Submit</button>
+
+        <div id="errorMessage" class="alert alert-danger" style="display:none; color: red;"></div>
+        
+    </form>
+
+
+<script>
+document.getElementById('myForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch('/newproject', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            // Handle successful submission
+            window.location.href = '/projects'; // Redirect on success
+        } else {
+            // Handle error response
+            const errorData = await response.json();
+            document.getElementById('errorMessage').textContent = errorData.error;
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+    } catch (error) {
+        // Handle network or other errors
+        document.getElementById('errorMessage').textContent = 'An unexpected error occurred. Please try again later.';
+        document.getElementById('errorMessage').style.display = 'block';
+    }
+});
+</script>
+      
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    </body>
+</html>
