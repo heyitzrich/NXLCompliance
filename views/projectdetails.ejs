@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <%- include("sidebar.ejs") %>
+</head>
+<body>
+    <h1 class="content text-center">Project Details</h1>
+
+    <form action="/projects/<%= project.projectnumber %>" method="post" class="content" id="myForm">
+        <div class="row justify-content-md-center">
+            <div class="form-group col-md-3">
+                <label for="inputProjectNumber">Project Number</label>
+                <input type="text" class="form-control" id="inputProjectNumber" name="projectNumber" value="<%= project.projectnumber %>" readonly disabled>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputDirNumber">DIR Number</label>
+                <input type="text" class="form-control" id="inputDirNumber" name="dirNumber" value="<%= project.dirnumber %>">
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="form-group col-md-3">
+                <label for="inputProjectManager">Project Manager</label>
+                <input type="text" class="form-control" id="inputProjectManager" name="projectManager" value="<%= project.projectmanager %>">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputProjectContract">Contract/PO</label>
+                <input type="text" class="form-control" id="inputProjectContract" name="projectContract" value="<%= project.projectcontract %>">
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="form-group col-md-6">
+                <label for="inputProjectName">Project Name</label>
+                <input type="text" class="form-control" id="inputProjectName" name="projectName" value="<%= project.projectname %>">
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="form-group col-md-6">
+                <label for="inputProjectAddress">Project Address</label>
+                <input type="text" class="form-control" id="inputProjectAddress" name="projectAddress" value="<%= project.projectaddress %>">
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="form-group col-md-2">
+                <label for="inputProjectCity">City</label>
+                <input type="text" class="form-control" id="inputProjectCity" name="projectCity" value="<%= project.projectcity %>">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="inputProjectState">State</label>
+                <select id="inputProjectState" class="form-control" name="projectState">
+                    <option value="AL" <%= project.projectstate === 'AL' ? 'selected' : '' %>>Alabama</option>
+                    <option value="AK" <%= project.projectstate === 'AK' ? 'selected' : '' %>>Alaska</option>
+                    <option value="AZ" <%= project.projectstate === 'AZ' ? 'selected' : '' %>>Arizona</option>
+                    <option value="AR" <%= project.projectstate === 'AR' ? 'selected' : '' %>>Arkansas</option>
+                    <option value="CA" <%= project.projectstate === 'CA' ? 'selected' : '' %>>California</option>
+                    <option value="CO" <%= project.projectstate === 'CO' ? 'selected' : '' %>>Colorado</option>
+                    <option value="CT" <%= project.projectstate === 'CT' ? 'selected' : '' %>>Connecticut</option>
+                    <option value="DE" <%= project.projectstate === 'DE' ? 'selected' : '' %>>Delaware</option>
+                    <option value="FL" <%= project.projectstate === 'FL' ? 'selected' : '' %>>Florida</option>
+                    <option value="GA" <%= project.projectstate === 'GA' ? 'selected' : '' %>>Georgia</option>
+                    <option value="HI" <%= project.projectstate === 'HI' ? 'selected' : '' %>>Hawaii</option>
+                    <option value="ID" <%= project.projectstate === 'ID' ? 'selected' : '' %>>Idaho</option>
+                    <option value="IL" <%= project.projectstate === 'IL' ? 'selected' : '' %>>Illinois</option>
+                    <option value="IN" <%= project.projectstate === 'IN' ? 'selected' : '' %>>Indiana</option>
+                    <option value="IA" <%= project.projectstate === 'IA' ? 'selected' : '' %>>Iowa</option>
+                    <option value="KS" <%= project.projectstate === 'KS' ? 'selected' : '' %>>Kansas</option>
+                    <option value="KY" <%= project.projectstate === 'KY' ? 'selected' : '' %>>Kentucky</option>
+                    <option value="LA" <%= project.projectstate === 'LA' ? 'selected' : '' %>>Louisiana</option>
+                    <option value="ME" <%= project.projectstate === 'ME' ? 'selected' : '' %>>Maine</option>
+                    <option value="MD" <%= project.projectstate === 'MD' ? 'selected' : '' %>>Maryland</option>
+                    <option value="MA" <%= project.projectstate === 'MA' ? 'selected' : '' %>>Massachusetts</option>
+                    <option value="MI" <%= project.projectstate === 'MI' ? 'selected' : '' %>>Michigan</option>
+                    <option value="MN" <%= project.projectstate === 'MN' ? 'selected' : '' %>>Minnesota</option>
+                    <option value="MS" <%= project.projectstate === 'MS' ? 'selected' : '' %>>Mississippi</option>
+                    <option value="MO" <%= project.projectstate === 'MO' ? 'selected' : '' %>>Missouri</option>
+                    <option value="MT" <%= project.projectstate === 'MT' ? 'selected' : '' %>>Montana</option>
+                    <option value="NE" <%= project.projectstate === 'NE' ? 'selected' : '' %>>Nebraska</option>
+                    <option value="NV" <%= project.projectstate === 'NV' ? 'selected' : '' %>>Nevada</option>
+                    <option value="NH" <%= project.projectstate === 'NH' ? 'selected' : '' %>>New Hampshire</option>
+                    <option value="NJ" <%= project.projectstate === 'NJ' ? 'selected' : '' %>>New Jersey</option>
+                    <option value="NM" <%= project.projectstate === 'NM' ? 'selected' : '' %>>New Mexico</option>
+                    <option value="NY" <%= project.projectstate === 'NY' ? 'selected' : '' %>>New York</option>
+                    <option value="NC" <%= project.projectstate === 'NC' ? 'selected' : '' %>>North Carolina</option>
+                    <option value="ND" <%= project.projectstate === 'ND' ? 'selected' : '' %>>North Dakota</option>
+                    <option value="OH" <%= project.projectstate === 'OH' ? 'selected' : '' %>>Ohio</option>
+                    <option value="OK" <%= project.projectstate === 'OK' ? 'selected' : '' %>>Oklahoma</option>
+                    <option value="OR" <%= project.projectstate === 'OR' ? 'selected' : '' %>>Oregon</option>
+                    <option value="PA" <%= project.projectstate === 'PA' ? 'selected' : '' %>>Pennsylvania</option>
+                    <option value="RI" <%= project.projectstate === 'RI' ? 'selected' : '' %>>Rhode Island</option>
+                    <option value="SC" <%= project.projectstate === 'SC' ? 'selected' : '' %>>South Carolina</option>
+                    <option value="SD" <%= project.projectstate === 'SD' ? 'selected' : '' %>>South Dakota</option>
+                    <option value="TN" <%= project.projectstate === 'TN' ? 'selected' : '' %>>Tennessee</option>
+                    <option value="TX" <%= project.projectstate === 'TX' ? 'selected' : '' %>>Texas</option>
+                    <option value="UT" <%= project.projectstate === 'UT' ? 'selected' : '' %>>Utah</option>
+                    <option value="VT" <%= project.projectstate === 'VT' ? 'selected' : '' %>>Vermont</option>
+                    <option value="VA" <%= project.projectstate === 'VA' ? 'selected' : '' %>>Virginia</option>
+                    <option value="WA" <%= project.projectstate === 'WA' ? 'selected' : '' %>>Washington</option>
+                    <option value="WV" <%= project.projectstate === 'WV' ? 'selected' : '' %>>West Virginia</option>
+                    <option value="WI" <%= project.projectstate === 'WI' ? 'selected' : '' %>>Wisconsin</option>
+                    <option value="WY" <%= project.projectstate === 'WY' ? 'selected' : '' %>>Wyoming</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2 mb-3">
+                <label for="inputProjectZip">Zip</label>
+                <input type="text" class="form-control" id="inputProjectZip" name="projectZip" value="<%= project.projectzip %>">
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="form-group col-md-3">
+                <label for="inputProjectTracking">Tracking</label>
+                <select class="form-select-sm" id="inputProjectTracking" name="projectTracking">
+                    <option value="DIR Only" <%= project.projecttracking === 'DIR Only' ? 'selected' : '' %>>DIR Only</option>
+                    <option value="DIR & LCP" <%= project.projecttracking === 'DIR & LCP' ? 'selected' : '' %>>DIR & LCP</option>
+                    <option value="DIR, LCP, & NXL Dropbox" <%= project.projecttracking === 'DIR, LCP, & NXL Dropbox' ? 'selected' : '' %>>DIR, LCP, & NXL Dropbox</option>
+                </select>
+            </div>
+            <div class="form-group col-md-3 mb-3">
+                <label for="inputProjectPortal">LCP Portal</label>
+                <select class="form-select-sm" id="inputProjectPortal" name="projectPortal">
+                    <option value="Align Builders Inc." <%= project.projectportal === 'Align Builders Inc.' ? 'selected' : '' %>>Align Builders Inc.</option>
+                    <option value="Balfour Beatty Construction" <%= project.projectportal === 'Balfour Beatty Construction' ? 'selected' : '' %>>Balfour Beatty Construction</option>
+                    <option value="Barnhart-Reese Construction, Inc." <%= project.projectportal === 'Barnhart-Reese Construction, Inc.' ? 'selected' : '' %>>Barnhart-Reese Construction, Inc.</option>
+                    <option value="BNBuilders, Inc." <%= project.projectportal === 'BNBuilders, Inc.' ? 'selected' : '' %>>BNBuilders, Inc.</option>
+                    <option value="Calleguas Municipal Water District" <%= project.projectportal === 'Calleguas Municipal Water District' ? 'selected' : '' %>>Calleguas Municipal Water District</option>
+                    <option value="DPR Construction" <%= project.projectportal === 'DPR Construction' ? 'selected' : '' %>>DPR Construction</option>
+                    <option value="Engie Services" <%= project.projectportal === 'Engie Services' ? 'selected' : '' %>>Engie Services</option>
+                    <option value="Erickson-Hall Construction" <%= project.projectportal === 'Erickson-Hall Construction' ? 'selected' : '' %>>Erickson-Hall Construction</option>
+                    <option value="Los Angeles Community College District" <%= project.projectportal === 'Los Angeles Community College District' ? 'selected' : '' %>>Los Angeles Community College District</option>
+                    <option value="Los Angeles County" <%= project.projectportal === 'Los Angeles County' ? 'selected' : '' %>>Los Angeles County</option>
+                    <option value="Los Angeles County Joint" <%= project.projectportal === 'Los Angeles County Joint' ? 'selected' : '' %>>Los Angeles County Joint</option>
+                    <option value="Los Angeles County Metro" <%= project.projectportal === 'Los Angeles County Metro' ? 'selected' : '' %>>Los Angeles County Metro</option>
+                    <option value="McCarthy Building Companies, Inc." <%= project.projectportal === 'McCarthy Building Companies, Inc.' ? 'selected' : '' %>>McCarthy Building Companies, Inc.</option>
+                    <option value="Neff Construction" <%= project.projectportal === 'Neff Construction' ? 'selected' : '' %>>Neff Construction</option>
+                    <option value="PCL - California Buildings" <%= project.projectportal === 'PCL - California Buildings' ? 'selected' : '' %>>PCL - California Buildings</option>
+                    <option value="Plumbing, Piping & Construction, Inc." <%= project.projectportal === 'Plumbing, Piping & Construction, Inc.' ? 'selected' : '' %>>Plumbing, Piping & Construction, Inc.</option>
+                    <option value="Public Works Consultant, Inc." <%= project.projectportal === 'Public Works Consultant, Inc.' ? 'selected' : '' %>>Public Works Consultant, Inc.</option>
+                    <option value="Riverside Unified School District" <%= project.projectportal === 'Riverside Unified School District' ? 'selected' : '' %>>Riverside Unified School District</option>
+                    <option value="Swinerton Builders" <%= project.projectportal === 'Swinerton Builders' ? 'selected' : '' %>>Swinerton Builders</option>
+                    <option value="University of California Los Angeles" <%= project.projectportal === 'University of California Los Angeles' ? 'selected' : '' %>>University of California Los Angeles</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary mb-4">Update</button>
+            </div>
+        </div>
+
+        <div id="errorMessage" class="alert alert-danger" style="display:none; color: red;"></div>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

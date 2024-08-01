@@ -6,6 +6,7 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
 
+
 const app = express();
 const port = 3000;
 const saltRounds = 10;
@@ -127,10 +128,51 @@ app.get("/projects", async (req, res) => {
     }} else {
         res.redirect("/")
     }
-   
 });
 
-//
+//Project Details Page
+app.get('/projects/:projectnumber', async (req, res) => {
+    if (req.isAuthenticated()) {
+        const projectNumber = req.params.projectnumber;
+        try {
+            const projectResult = await db.query("SELECT * FROM projects WHERE projectnumber = $1", [projectNumber]);
+            const project = projectResult.rows[0];
+
+            if (!project) {
+                return res.status(404).send('Project not found');
+            }
+
+            res.render('projectdetails.ejs', { project });
+        } catch (err) {
+            console.error("Error fetching project details:", err);
+            res.status(500).send("Internal Server Error");
+        }
+    } else {
+        res.redirect("/");
+    }
+});
+
+// Handle Project Update
+app.post('/projects/:projectnumber', async (req, res) => {
+    if (req.isAuthenticated()) {
+        const projectNumber = req.params.projectnumber;
+        const { dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal } = req.body;
+
+        try {
+            await db.query(
+                "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10 WHERE projectnumber = $11",
+                [dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNumber]
+            );
+            res.redirect(`/projects`);
+        } catch (err) {
+            console.error("Error updating project:", err);
+            res.status(500).send("Internal Server Error");
+        }
+    } else {
+        res.redirect("/");
+    }
+});
+
 app.post("/",passport.authenticate("local", {
     successRedirect: "/home",
     failureRedirect: ""
