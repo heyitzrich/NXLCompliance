@@ -11,15 +11,20 @@
     <h1 class="content text-center">Customer Maintenance</h1>
     <hr>
     <form action="/newcustomer" method="POST" class="content">
-        <div class="col-md">
+      <div class="row justify-content-md-center">
+        <div class="col-md-6">
           <label for="inputCustomerCompany">Company Name</label>
           <input type="text" class="form-control" id="inputCustomerCompany" name="customerCompany" required>
         </div>
-      <div class="row">
+      </div>
+
+      <div class="row justify-content-md-center">
         <div class="col-md-6">
           <label for="inputCustomerAddress">Address</label>
           <input type="text" class="form-control" id="inputAddress" name="customerAddress" required>
         </div>
+      </div>
+      <div class="row justify-content-md-center">
         <div class="col-md-2">
             <label for="inputCustomerCity">City</label>
             <input type="text" class="form-control" id="inputCity" name="customerCity" required>
@@ -88,13 +93,14 @@
               <option value="NA">Not a US City</option>
             </select>
           </div>
-
           <div class="col-md-2">
             <label for="inputCustomerZip">Zip</label>
             <input type="text" class="form-control" id="inputZip" name="customerZip" required>
           </div>
+        </div>
       </div>
-      <div class ='row'>
+
+      <div class ='row justify-content-md-center'>
           <div class="col-md-3">
             <label for="inputCustomerContactName">Customer Contact Name</label>
             <input type="text" class="form-control" id="inputCustomerContactName" name="customerContactName" required>
@@ -103,14 +109,19 @@
             <label for="inputCustomerContactNumber">Customer Contact Number</label>
             <input type="text" class="form-control" id="inputCustomerContactNumber" name="customerContactNumber" required>
           </div>
+        </div>
+        <div class="row justify-content-md-center">
           <div class="col-md-6 mb-3">
             <label for="inputCustomerContactEmail">Customer Contact Email</label>
             <input type="text" class="form-control" id="inputCustomerContactEmail" name="customerContactEmail" required>
           </div>
-      </div>
-          <div>
+        </div>
+
+        <div class="row justify-content-md-center">
+          <div class="col-md-1">
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>
+        </div>
       </div>
 
     </form>

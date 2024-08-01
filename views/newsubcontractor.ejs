@@ -11,15 +11,21 @@
     <h1 class="content text-center">Subcontractor Maintenance</h1>
     <hr>
     <form action="/newsubcontractor" method="Post" class="content">
-          <div class="form-group col-md">
+      <div class="row justify-content-md-center">
+          <div class="form-group col-md-6">
             <label for="inputSubCompany">Subcontractor Name</label>
             <input type="text" class="form-control" id="inputSub" name="subName">
           </div>
-      <div class="row">
+      </div>
+
+      <div class="row justify-content-md-center">
         <div class="form-group col-md-6">
           <label for="inputSubAddress">Address</label>
           <input type="text" class="form-control" id="inputAddress" name="subAddress">
         </div>
+      </div>
+
+      <div class="row justify-content-md-center">
         <div class="form-group col-md-2">
           <label for="inputSubCity">City</label>
           <input type="text" class="form-control" id="inputCity" name="subCity">
@@ -92,10 +98,16 @@
             <label for="inputSubZip">Zip</label>
             <input type="text" class="form-control" id="inputZip" name="subZip">
         </div>
+      </div>
+
+      <div class="row justify-content-md-center">
         <div class="form-group col-md-6">
           <label for="inputSubContactName">Sub Contact Name</label>
           <input type="text" class="form-control" id="inputSubContactName" name="subContactName">
         </div>
+      </div>
+
+      <div class="row justify-content-md-center">
         <div class="form-group col-md-3">
           <label for="inputSubContactNumber">Sub Contact Number</label>
           <input type="text" class="form-control" id="inputSubContactNumber" name="subContactNumber">
@@ -104,11 +116,14 @@
           <label for="inputSubContactEmail">Sub Contact Email</label>
           <input type="text" class="form-control" id="inputSubContactEmail" name="subContactEmail">
         </div>
-        
-        <div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
       </div>
+
+        <div class="row justify-content-md-center">
+          <div class="row col-md-1">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+
       </form>
 
       

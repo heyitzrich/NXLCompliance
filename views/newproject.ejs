@@ -10,18 +10,19 @@
 <body>
     <h1 class="content text-center">Project Maintenance</h1>
     <hr>
-    <form action="/newproject" method="Post" class="content" id="myForm">
-        <div class="row">
+    <form action="/newproject" method="post" class="content" id="myForm">
+        <div class="row justify-content-md-center">
           <div class="form-group col-md-3">
             <label for="inputProjectNumber">Project Number</label>
-            <input type="text" class="form-control" id="inputProjectNumber" name="projectNumber">
+            <input type="text" class="form-control" id="inputProjectNumber" name="projectNumber" required>
           </div>
           <div class="form-group col-md-3">
             <label for="inputDirNumber">DIR Number</label>
             <input type="text" class="form-control" id="inputDirNumber"  name="dirNumber">
           </div>
         </div>
-        <div class="row">
+
+        <div class="row justify-content-md-center">
           <div class="form-group col-md-3">
             <label for="inputProjectManager">Project Manager</label>
             <input type="text" class="form-control" id="inputProjectManager" name="projectManager">
@@ -31,19 +32,22 @@
             <input type="text" class="form-control" id="inputProjectContract" name="projectContract">
           </div>
         </div>
-        <div class="row">
+
+        <div class="row justify-content-md-center">
           <div class="form-group col-md-6">
             <label for="inputProjectName">Project Name</label>
             <input type="text" class="form-control" id="inputProjectName" name="projectName">
           </div>
         </div>
-        <div class="row">
+
+        <div class="row justify-content-md-center">
           <div class="form-group col-md-6">
             <label for="inputProjectAddress">Project Address</label>
             <input type="text" class="form-control" id="inputProjectAddress" name="projectAddress">
           </div>
         </div>
-        <div class="row">
+
+        <div class="row justify-content-md-center">
           <div class="form-group col-md-2">
             <label for="inputSubCity">Project City</label>
             <input type="text" class="form-control" id="inputProjectCity" name="projectCity">
@@ -118,20 +122,20 @@
           </div>
         </div>
         
-        <div class="row">
+        <div class="row justify-content-md-center">
           <div class="form-group col-md-3">
+            <label for="inputProjectTracking">Tracking</label>
             <select class="form-select-sm" id="inputProjectTracking" name="projectTracking">
-              <label for="inputProjectTracking">Tracking</label>
-              <option selected>Select an Option</option>
+              <option disabled selected>Select an Option</option>
               <option value="DIR Only">DIR Only</option>
               <option value="DIR & LCP">DIR & LCP</option>
               <option value="DIR, LCP, & NXL Dropbox">DIR, LCP, & NXL Dropbox</option>
             </select>
           </div>
           <div class="form-group col-md-3 mb-3">
+            <label for="inputProjectPortal">LCP Portal</label>
             <select class="form-select-sm" id="inputProjectPortal" name="projectPortal">
-              <label for="inputProjectPortal">LCP Portal</label>
-              <option selected>Select an Option</option>
+              <option disabled selected>Select an Option</option>
               <option value="Align Builders Inc.">Align Builders Inc.</option>
               <option value="Balfour Beatty Construction">Balfour Beatty Construction</option>
               <option value="Barnhart-Reese Construction, Inc.">Barnhart-Reese Construction, Inc.</option>
@@ -144,11 +148,22 @@
               <option value="Los Angeles County">Los Angeles County</option>
               <option value="Los Angeles County Joint">Los Angeles County Joint</option>
               <option value="Los Angeles County Metro">Los Angeles County Metro</option>
+              <option value="McCarthy Building Companies, Inc.">McCarthy Building Companies, Inc.</option>
+              <option value="Neff Construction">Neff Construction</option>
+              <option value="PCL - California Buildings">PCL - California Buildings</option>
+              <option value="Plumbing, Piping & Construction, Inc.">Plumbing, Piping & Construction, Inc.</option>
+              <option value="Public Works Consultant, Inc.">Public Works Consultant, Inc.</option>
+              <option value="Riverside Unified School District">Riverside Unified School District</option>
+              <option value="Swinerton Builders">Swinerton Builders</option>
+              <option value="University of California Los Angeles">University of California Los Angeles</option>
             </select>
           </div>
         </div>
-        
-        <button type="submit" class="btn btn-primary mb-4">Submit</button>
+      <div class="row justify-content-md-center">
+        <div class="col-md-1">
+          <button type="submit" class="btn btn-primary mb-4">Submit</button>
+        </div>
+      </div>
 
         <div id="errorMessage" class="alert alert-danger" style="display:none; color: red;"></div>
         
@@ -161,6 +176,14 @@ document.getElementById('myForm').addEventListener('submit', async function(even
 
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
+
+    // Client-side validation
+    if (!data.projectNumber || !data.projectName || !data.projectAddress || !data.projectCity || !data.projectState ||
+        !data.projectZip) {
+        document.getElementById('errorMessage').textContent = 'All fields are required.';
+        document.getElementById('errorMessage').style.display = 'block';
+        return;
+    }
 
     try {
         const response = await fetch('/newproject', {

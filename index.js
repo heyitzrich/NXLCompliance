@@ -20,7 +20,7 @@ const db = new pg.Client({
 });
 
 db.connect();
-
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('public'));
 
@@ -221,14 +221,12 @@ app.post("/newproject", async (req, res) => {
     const projectZip = req.body.projectZip;
     const projectTracking = req.body.projectTracking;
     const projectPortal = req.body.projectPortal;
-
     try {
         await db.query(
         "INSERT INTO projects (projectnumber, dirnumber, projectmanager, projectcontract, projectname, projectaddress, projectcity, projectstate, projectzip, projecttracking, projectportal) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
         [projectNumber, dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal]
         );
-
-        res.status(200).json({ success: true });
+        res.redirect("/projects");
     } catch (err) {
         console.error("Error inserting project:", err);
 
