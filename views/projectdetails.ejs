@@ -117,6 +117,7 @@
             <div class="form-group col-md-3">
                 <label for="inputProjectTracking">Tracking</label>
                 <select class="form-select-sm" id="inputProjectTracking" name="projectTracking">
+                    <option value= "" selected>Select an Option</option>
                     <option value="DIR Only" <%= project.projecttracking === 'DIR Only' ? 'selected' : '' %>>DIR Only</option>
                     <option value="DIR & LCP" <%= project.projecttracking === 'DIR & LCP' ? 'selected' : '' %>>DIR & LCP</option>
                     <option value="DIR, LCP, & NXL Dropbox" <%= project.projecttracking === 'DIR, LCP, & NXL Dropbox' ? 'selected' : '' %>>DIR, LCP, & NXL Dropbox</option>
@@ -125,6 +126,7 @@
             <div class="form-group col-md-3 mb-3">
                 <label for="inputProjectPortal">LCP Portal</label>
                 <select class="form-select-sm" id="inputProjectPortal" name="projectPortal">
+                    <option value= "" selected>Select an Option</option>
                     <option value="Align Builders Inc." <%= project.projectportal === 'Align Builders Inc.' ? 'selected' : '' %>>Align Builders Inc.</option>
                     <option value="Balfour Beatty Construction" <%= project.projectportal === 'Balfour Beatty Construction' ? 'selected' : '' %>>Balfour Beatty Construction</option>
                     <option value="Barnhart-Reese Construction, Inc." <%= project.projectportal === 'Barnhart-Reese Construction, Inc.' ? 'selected' : '' %>>Barnhart-Reese Construction, Inc.</option>

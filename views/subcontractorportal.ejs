@@ -17,7 +17,6 @@
     <%- include("sidebar.ejs") %>
         <h1 class="content text-center">Subcontractor Portal</h1>
 
-        
     <div class="d-flex gap-2 justify-content-left py-5 content" >
         <a href="/newsubcontractor"><button class="btn btn-primary d-inline-flex align-items-center" type="button">
           Add New Subcontractor
@@ -41,7 +40,7 @@
           <tbody>
             <% subData.forEach(function(subData) { %>
               <tr>
-                <td><%= subData.subname %></td>
+                <td><a href="/subcontractor/<%= subData.subname %>"><%= subData.subname %></td>
                 <td><%= subData.subaddress %></td>
                 <td><%= subData.subcity %></td>
                 <td><%= subData.substate %></td>

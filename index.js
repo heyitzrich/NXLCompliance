@@ -11,6 +11,7 @@ const app = express();
 const port = 3000;
 const saltRounds = 10;
 
+
 //DB Credentials
 const db = new pg.Client({
     user: "postgres",
@@ -36,6 +37,8 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+
 
 //Render Login Page
 app.get("/", async (req, res) => {
@@ -120,7 +123,7 @@ app.get("/subcontractor", async (req, res) => {
 app.get("/projects", async (req, res) => {
     if (req.isAuthenticated()){
     try {
-        const projectData = await db.query("SELECT * FROM projects");
+        const projectData = await db.query("SELECT * FROM projects ORDER BY projectnumber ASC");
         res.render("projects.ejs", {projectData: projectData.rows});
     } catch (err) {
         console.error("Error feting subcontractors:", err);
@@ -152,6 +155,50 @@ app.get('/projects/:projectnumber', async (req, res) => {
     }
 });
 
+//Customer Details Page
+app.get('/customer/:customername', async (req, res) => {
+    if (req.isAuthenticated()) {
+        const customerName = req.params.customername;
+        try {
+            const customerResult = await db.query("SELECT * FROM customers WHERE customername = $1", [customerName]);
+            const customer = customerResult.rows[0];
+
+            if (!customer) {
+                return res.status(404).send('Customer not found');
+            }
+
+            res.render('customerdetails.ejs', { customer });
+        } catch (err) {
+            console.error("Error fetching customer details:", err);
+            res.status(500).send("Internal Server Error");
+        }
+    } else {
+        res.redirect("/");
+    }
+});
+
+//Sub Details Page
+app.get('/subcontractor/:subname', async (req, res) => {
+    if (req.isAuthenticated()) {
+        const subName = req.params.subname;
+        try {
+            const subResult = await db.query("SELECT * FROM subcontractors WHERE subname = $1", [subName]);
+            const sub = subResult.rows[0];
+
+            if (!sub) {
+                return res.status(404).send('Sub not found');
+            }
+
+            res.render('subcontractordetails.ejs', { sub });
+        } catch (err) {
+            console.error("Error fetching sub details:", err);
+            res.status(500).send("Internal Server Error");
+        }
+    } else {
+        res.redirect("/");
+    }
+});
+
 // Handle Project Update
 app.post('/projects/:projectnumber', async (req, res) => {
     if (req.isAuthenticated()) {
@@ -173,6 +220,50 @@ app.post('/projects/:projectnumber', async (req, res) => {
     }
 });
 
+// Handle Customer Update
+app.post('/customer/:customername', async (req, res) => {
+    if (req.isAuthenticated()) {
+        const customerName = req.params.customername;
+        const { customerAddress, customerCity, customerState, customerZip, customerContactName, customerContactNumber, customerContactEmail } = req.body;
+
+        try {
+            await db.query(
+                "UPDATE customers SET customeraddress = $1, customercity = $2, customerstate = $3, customerzip = $4, customercontactname = $5, customercontactnumber = $6, customercontactemail = $7 WHERE customername = $8",
+                [customerAddress, customerCity, customerState, customerZip, customerContactName, customerContactNumber, customerContactEmail, customerName]
+            );
+            res.redirect(`/customer`);
+        } catch (err) {
+            console.error("Error updating customer:", err);
+            res.status(500).send("Internal Server Error");
+        }
+    } else {
+        res.redirect("/");
+    }
+});
+
+// Handle Sub Update
+app.post('/subcontractor/:subname', async (req, res) => {
+    if (req.isAuthenticated()) {
+        const subName = req.params.subname;
+        const { subAddress, subCity, subState, subZip, subContactName, subContactNumber, subContactEmail } = req.body;
+
+        try {
+            await db.query(
+                "UPDATE subcontractors SET subaddress = $1, subcity = $2, substate = $3, subzip = $4, subcontactname = $5, subcontactnumber = $6, subcontactemail = $7 WHERE subname = $8",
+                [subAddress, subCity, subState, subZip, subContactName, subContactNumber, subContactEmail, subName]
+            );
+            res.redirect(`/subcontractor`);
+        } catch (err) {
+            console.error("Error updating Sub:", err);
+            res.status(500).send("Internal Server Error");
+        }
+    } else {
+        res.redirect("/");
+    }
+});
+
+
+//User Auth
 app.post("/",passport.authenticate("local", {
     successRedirect: "/home",
     failureRedirect: ""
@@ -210,7 +301,7 @@ app.post("/admin", async (req, res) => {
 
 //Adds information entered in NewCustomer page to DB
 app.post("/newcustomer", async (req, res) => {
-    const customerCompany = req.body.customerCompany;
+    const customerName = req.body.customerName;
     const customerAddress = req.body.customerAddress;
     const customerCity = req.body.customerCity;
     const customerState = req.body.customerState;
@@ -221,7 +312,7 @@ app.post("/newcustomer", async (req, res) => {
     try {
         await db.query(
         "INSERT INTO customers (customername, customeraddress, customercity, customerstate, customerzip, customercontactname, customercontactnumber, customercontactemail) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-        [customerCompany, customerAddress, customerCity, customerState, customerZip, customerContactName, customerContactNumber, customerContactEmail]
+        [customerName, customerAddress, customerCity, customerState, customerZip, customerContactName, customerContactNumber, customerContactEmail]
         );
     res.redirect("/customer");
     } catch(err) {
@@ -250,7 +341,7 @@ app.post("/newsubcontractor", async (req, res) => {
     }
 });
 
-//Adds information entere in Projects page to DB
+//Adds information entered in Projects page to DB
 app.post("/newproject", async (req, res) => {
     const projectNumber = req.body.projectNumber;
     const dirNumber = req.body.dirNumber;

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subcontractor Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <%- include("sidebar.ejs") %>
+</head>
+<body>
+    <h1 class="content text-center">Subcontractor Details</h1>
+    
+    <form action="/subcontractor/<%=sub.subname %>" method="Post" class="content">
+      <div class="row justify-content-md-center">
+          <div class="form-group col-md-6">
+            <label for="inputSubCompany">Subcontractor Name</label>
+            <input type="text" class="form-control" id="inputSub" name="subName" value="<%=sub.subname %>" required disabled readonly>
+          </div>
+      </div>
+
+      <div class="row justify-content-md-center">
+        <div class="form-group col-md-6">
+          <label for="inputSubAddress">Address</label>
+          <input type="text" class="form-control" id="inputAddress" name="subAddress" value="<%=sub.subaddress %>">
+        </div>
+      </div>
+
+      <div class="row justify-content-md-center">
+        <div class="form-group col-md-2">
+          <label for="inputSubCity">City</label>
+          <input type="text" class="form-control" id="inputCity" name="subCity" value="<%=sub.subcity %>">
+        </div>
+        <div class="form-group col-md-2">
+          <label for="inputSubState">State</label>
+          <select id="inputState" class="form-control" name="subState" value="<%=sub.substate %>">
+            <option value="AL" <%= sub.substate === 'AL' ? 'selected' : '' %>>Alabama</option>
+            <option value="AK" <%= sub.substate === 'AK' ? 'selected' : '' %>>Alaska</option>
+            <option value="AZ" <%= sub.substate === 'AZ' ? 'selected' : '' %>>Arizona</option>
+            <option value="AR" <%= sub.substate === 'AR' ? 'selected' : '' %>>Arkansas</option>
+            <option value="CA" <%= sub.substate === 'CA' ? 'selected' : '' %>>California</option>
+            <option value="CO" <%= sub.substate === 'CO' ? 'selected' : '' %>>Colorado</option>
+            <option value="CT" <%= sub.substate === 'CT' ? 'selected' : '' %>>Connecticut</option>
+            <option value="DE" <%= sub.substate === 'DE' ? 'selected' : '' %>>Delaware</option>
+            <option value="FL" <%= sub.substate === 'FL' ? 'selected' : '' %>>Florida</option>
+            <option value="GA" <%= sub.substate === 'GA' ? 'selected' : '' %>>Georgia</option>
+            <option value="HI" <%= sub.substate === 'HI' ? 'selected' : '' %>>Hawaii</option>
+            <option value="ID" <%= sub.substate === 'ID' ? 'selected' : '' %>>Idaho</option>
+            <option value="IL" <%= sub.substate === 'IL' ? 'selected' : '' %>>Illinois</option>
+            <option value="IN" <%= sub.substate === 'IN' ? 'selected' : '' %>>Indiana</option>
+            <option value="IA" <%= sub.substate === 'IA' ? 'selected' : '' %>>Iowa</option>
+            <option value="KS" <%= sub.substate === 'KS' ? 'selected' : '' %>>Kansas</option>
+            <option value="KY" <%= sub.substate === 'KY' ? 'selected' : '' %>>Kentucky</option>
+            <option value="LA" <%= sub.substate === 'LA' ? 'selected' : '' %>>Louisiana</option>
+            <option value="ME" <%= sub.substate === 'ME' ? 'selected' : '' %>>Maine</option>
+            <option value="MD" <%= sub.substate === 'MD' ? 'selected' : '' %>>Maryland</option>
+            <option value="MA" <%= sub.substate === 'MA' ? 'selected' : '' %>>Massachusetts</option>
+            <option value="MI" <%= sub.substate === 'MI' ? 'selected' : '' %>>Michigan</option>
+            <option value="MN" <%= sub.substate === 'MN' ? 'selected' : '' %>>Minnesota</option>
+            <option value="MS" <%= sub.substate === 'MS' ? 'selected' : '' %>>Mississippi</option>
+            <option value="MO" <%= sub.substate === 'MO' ? 'selected' : '' %>>Missouri</option>
+            <option value="MT" <%= sub.substate === 'MT' ? 'selected' : '' %>>Montana</option>
+            <option value="NE" <%= sub.substate === 'NE' ? 'selected' : '' %>>Nebraska</option>
+            <option value="NV" <%= sub.substate === 'NV' ? 'selected' : '' %>>Nevada</option>
+            <option value="NH" <%= sub.substate === 'NH' ? 'selected' : '' %>>New Hampshire</option>
+            <option value="NJ" <%= sub.substate === 'NJ' ? 'selected' : '' %>>New Jersey</option>
+            <option value="NM" <%= sub.substate === 'NM' ? 'selected' : '' %>>New Mexico</option>
+            <option value="NY" <%= sub.substate === 'NY' ? 'selected' : '' %>>New York</option>
+            <option value="NC" <%= sub.substate === 'NC' ? 'selected' : '' %>>North Carolina</option>
+            <option value="ND" <%= sub.substate === 'ND' ? 'selected' : '' %>>North Dakota</option>
+            <option value="OH" <%= sub.substate === 'OH' ? 'selected' : '' %>>Ohio</option>
+            <option value="OK" <%= sub.substate === 'OK' ? 'selected' : '' %>>Oklahoma</option>
+            <option value="OR" <%= sub.substate === 'OR' ? 'selected' : '' %>>Oregon</option>
+            <option value="PA" <%= sub.substate === 'PA' ? 'selected' : '' %>>Pennsylvania</option>
+            <option value="RI" <%= sub.substate === 'RI' ? 'selected' : '' %>>Rhode Island</option>
+            <option value="SC" <%= sub.substate === 'SC' ? 'selected' : '' %>>South Carolina</option>
+            <option value="SD" <%= sub.substate === 'SD' ? 'selected' : '' %>>South Dakota</option>
+            <option value="TN" <%= sub.substate === 'TN' ? 'selected' : '' %>>Tennessee</option>
+            <option value="TX" <%= sub.substate === 'TX' ? 'selected' : '' %>>Texas</option>
+            <option value="UT" <%= sub.substate === 'UT' ? 'selected' : '' %>>Utah</option>
+            <option value="VT" <%= sub.substate === 'VT' ? 'selected' : '' %>>Vermont</option>
+            <option value="VA" <%= sub.substate === 'VA' ? 'selected' : '' %>>Virginia</option>
+            <option value="WA" <%= sub.substate === 'WA' ? 'selected' : '' %>>Washington</option>
+            <option value="WV" <%= sub.substate === 'WV' ? 'selected' : '' %>>West Virginia</option>
+            <option value="WI" <%= sub.substate === 'WI' ? 'selected' : '' %>>Wisconsin</option>
+            <option value="WY" <%= sub.substate === 'WY' ? 'selected' : '' %>>Wyoming</option>
+            </select>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="inputSubZip">Zip</label>
+            <input type="text" class="form-control" id="inputZip" name="subZip" value="<%=sub.subzip %>">
+        </div>
+      </div>
+
+      <div class="row justify-content-md-center">
+        <div class="form-group col-md-6">
+          <label for="inputSubContactName">Sub Contact Name</label>
+          <input type="text" class="form-control" id="inputSubContactName" name="subContactName" value="<%=sub.subcontactname %>">
+        </div>
+      </div>
+
+      <div class="row justify-content-md-center">
+        <div class="form-group col-md-3">
+          <label for="inputSubContactNumber">Sub Contact Number</label>
+          <input type="text" class="form-control" id="inputSubContactNumber" name="subContactNumber" value="<%=sub.subcontactnumber %>">
+        </div>
+        <div class="form-group col-md-3 mb-3">
+          <label for="inputSubContactEmail">Sub Contact Email</label>
+          <input type="text" class="form-control" id="inputSubContactEmail" name="subContactEmail" value="<%=sub.subcontactemail %>">
+        </div>
+      </div>
+
+        <div class="row justify-content-md-center">
+          <div class="row col-md-1">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+
+      </form>
+
+      
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    </body>
+</html>

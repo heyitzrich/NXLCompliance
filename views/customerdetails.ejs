@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <%- include("sidebar.ejs") %>
+</head>
+<body>
+    <h1 class="content text-center">Customer Details</h1>
+    
+    <form action="/customer/<%=customer.customername %>" method="POST" class="content">
+      <div class="row justify-content-md-center">
+        <div class="col-md-6">
+          <label for="inputCustomerName">Company Name</label>
+          <input type="text" class="form-control" id="inputCustomerName" name="customerName" value="<%=customer.customername %>" required readonly disabled>
+        </div>
+      </div>
+
+      <div class="row justify-content-md-center">
+        <div class="col-md-6">
+          <label for="inputCustomerAddress">Address</label>
+          <input type="text" class="form-control" id="inputAddress" name="customerAddress" value="<%=customer.customeraddress %>" required>
+        </div>
+      </div>
+      <div class="row justify-content-md-center">
+        <div class="col-md-2">
+            <label for="inputCustomerCity">City</label>
+            <input type="text" class="form-control" id="inputCity" name="customerCity" value="<%=customer.customercity %>"required>
+        </div>
+        <div class="col-md-2">
+            <label for="inputCustomerState">State</label>
+            <select id="inputState" class="form-control" name="customerState" value="<%=customer.customerstate %>" required>
+                <option value="AL" <%= customer.customerstate === 'AL' ? 'selected' : '' %>>Alabama</option>
+                <option value="AK" <%= customer.customerstate === 'AK' ? 'selected' : '' %>>Alaska</option>
+                <option value="AZ" <%= customer.customerstate === 'AZ' ? 'selected' : '' %>>Arizona</option>
+                <option value="AR" <%= customer.customerstate === 'AR' ? 'selected' : '' %>>Arkansas</option>
+                <option value="CA" <%= customer.customerstate === 'CA' ? 'selected' : '' %>>California</option>
+                <option value="CO" <%= customer.customerstate === 'CO' ? 'selected' : '' %>>Colorado</option>
+                <option value="CT" <%= customer.customerstate === 'CT' ? 'selected' : '' %>>Connecticut</option>
+                <option value="DE" <%= customer.customerstate === 'DE' ? 'selected' : '' %>>Delaware</option>
+                <option value="FL" <%= customer.customerstate === 'FL' ? 'selected' : '' %>>Florida</option>
+                <option value="GA" <%= customer.customerstate === 'GA' ? 'selected' : '' %>>Georgia</option>
+                <option value="HI" <%= customer.customerstate === 'HI' ? 'selected' : '' %>>Hawaii</option>
+                <option value="ID" <%= customer.customerstate === 'ID' ? 'selected' : '' %>>Idaho</option>
+                <option value="IL" <%= customer.customerstate === 'IL' ? 'selected' : '' %>>Illinois</option>
+                <option value="IN" <%= customer.customerstate === 'IN' ? 'selected' : '' %>>Indiana</option>
+                <option value="IA" <%= customer.customerstate === 'IA' ? 'selected' : '' %>>Iowa</option>
+                <option value="KS" <%= customer.customerstate === 'KS' ? 'selected' : '' %>>Kansas</option>
+                <option value="KY" <%= customer.customerstate === 'KY' ? 'selected' : '' %>>Kentucky</option>
+                <option value="LA" <%= customer.customerstate === 'LA' ? 'selected' : '' %>>Louisiana</option>
+                <option value="ME" <%= customer.customerstate === 'ME' ? 'selected' : '' %>>Maine</option>
+                <option value="MD" <%= customer.customerstate === 'MD' ? 'selected' : '' %>>Maryland</option>
+                <option value="MA" <%= customer.customerstate === 'MA' ? 'selected' : '' %>>Massachusetts</option>
+                <option value="MI" <%= customer.customerstate === 'MI' ? 'selected' : '' %>>Michigan</option>
+                <option value="MN" <%= customer.customerstate === 'MN' ? 'selected' : '' %>>Minnesota</option>
+                <option value="MS" <%= customer.customerstate === 'MS' ? 'selected' : '' %>>Mississippi</option>
+                <option value="MO" <%= customer.customerstate === 'MO' ? 'selected' : '' %>>Missouri</option>
+                <option value="MT" <%= customer.customerstate === 'MT' ? 'selected' : '' %>>Montana</option>
+                <option value="NE" <%= customer.customerstate === 'NE' ? 'selected' : '' %>>Nebraska</option>
+                <option value="NV" <%= customer.customerstate === 'NV' ? 'selected' : '' %>>Nevada</option>
+                <option value="NH" <%= customer.customerstate === 'NH' ? 'selected' : '' %>>New Hampshire</option>
+                <option value="NJ" <%= customer.customerstate === 'NJ' ? 'selected' : '' %>>New Jersey</option>
+                <option value="NM" <%= customer.customerstate === 'NM' ? 'selected' : '' %>>New Mexico</option>
+                <option value="NY" <%= customer.customerstate === 'NY' ? 'selected' : '' %>>New York</option>
+                <option value="NC" <%= customer.customerstate === 'NC' ? 'selected' : '' %>>North Carolina</option>
+                <option value="ND" <%= customer.customerstate === 'ND' ? 'selected' : '' %>>North Dakota</option>
+                <option value="OH" <%= customer.customerstate === 'OH' ? 'selected' : '' %>>Ohio</option>
+                <option value="OK" <%= customer.customerstate === 'OK' ? 'selected' : '' %>>Oklahoma</option>
+                <option value="OR" <%= customer.customerstate === 'OR' ? 'selected' : '' %>>Oregon</option>
+                <option value="PA" <%= customer.customerstate === 'PA' ? 'selected' : '' %>>Pennsylvania</option>
+                <option value="RI" <%= customer.customerstate === 'RI' ? 'selected' : '' %>>Rhode Island</option>
+                <option value="SC" <%= customer.customerstate === 'SC' ? 'selected' : '' %>>South Carolina</option>
+                <option value="SD" <%= customer.customerstate === 'SD' ? 'selected' : '' %>>South Dakota</option>
+                <option value="TN" <%= customer.customerstate === 'TN' ? 'selected' : '' %>>Tennessee</option>
+                <option value="TX" <%= customer.customerstate === 'TX' ? 'selected' : '' %>>Texas</option>
+                <option value="UT" <%= customer.customerstate === 'UT' ? 'selected' : '' %>>Utah</option>
+                <option value="VT" <%= customer.customerstate === 'VT' ? 'selected' : '' %>>Vermont</option>
+                <option value="VA" <%= customer.customerstate === 'VA' ? 'selected' : '' %>>Virginia</option>
+                <option value="WA" <%= customer.customerstate === 'WA' ? 'selected' : '' %>>Washington</option>
+                <option value="WV" <%= customer.customerstate === 'WV' ? 'selected' : '' %>>West Virginia</option>
+                <option value="WI" <%= customer.customerstate === 'WI' ? 'selected' : '' %>>Wisconsin</option>
+                <option value="WY" <%= customer.customerstate === 'WY' ? 'selected' : '' %>>Wyoming</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label for="inputCustomerZip">Zip</label>
+            <input type="text" class="form-control" id="inputZip" name="customerZip" value="<%=customer.customerzip %>" required>
+          </div>
+        </div>
+      </div>
+
+      <div class ='row justify-content-md-center'>
+          <div class="col-md-3">
+            <label for="inputCustomerContactName">Customer Contact Name</label>
+            <input type="text" class="form-control" id="inputCustomerContactName" name="customerContactName" value="<%=customer.customercontactname %>" required>
+          </div>
+          <div class="col-md-3">
+            <label for="inputCustomerContactNumber">Customer Contact Number</label>
+            <input type="text" class="form-control" id="inputCustomerContactNumber" name="customerContactNumber" value="<%=customer.customercontactnumber %>" required>
+          </div>
+        </div>
+        <div class="row justify-content-md-center">
+          <div class="col-md-6 mb-3">
+            <label for="inputCustomerContactEmail">Customer Contact Email</label>
+            <input type="text" class="form-control" id="inputCustomerContactEmail" name="customerContactEmail" value="<%=customer.customercontactemail %>" required>
+          </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+          <div class="col-md-1">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+      
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    </body>
+</html>

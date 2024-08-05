@@ -41,7 +41,7 @@
           <tbody>
             <% customerData.forEach(function(customerData) { %>
               <tr>
-                <td><%= customerData.customername %></td>
+                <td><a href="/customer/<%= customerData.customername %>"><%= customerData.customername %></a></td>
                 <td><%= customerData.customeraddress %></td>
                 <td><%= customerData.customercity %></td>
                 <td><%= customerData.customerstate %></td>
