@@ -32,7 +32,14 @@
             <input type="text" class="form-control" id="inputProjectContract" name="projectContract">
           </div>
         </div>
-
+        <div class="row justify-content-md-center">
+          <div class="form-group col-md-6">
+            <label for="inputProjectCustomer">Customer</label>
+            <select class="form-control" id="inputProjectCustomer" name="projectCustomer" required>
+              <option value="" selected>Select a Customer</option>
+            </select>
+          </div>
+        </div>
         <div class="row justify-content-md-center">
           <div class="form-group col-md-6">
             <label for="inputProjectName">Project Name</label>
@@ -121,11 +128,10 @@
             <input type="text" class="form-control" id="inputProjectZip" name="projectZip">
           </div>
         </div>
-        
         <div class="row justify-content-md-center">
           <div class="form-group col-md-3">
             <label for="inputProjectTracking">Tracking</label>
-            <select class="form-select-sm" id="inputProjectTracking" name="projectTracking">
+            <select class="form-control" id="inputProjectTracking" name="projectTracking">
               <option value="" selected>Select an Option</option>
               <option value="DIR Only">DIR Only</option>
               <option value="DIR & LCP">DIR & LCP</option>
@@ -134,7 +140,7 @@
           </div>
           <div class="form-group col-md-3 mb-3">
             <label for="inputProjectPortal">LCP Portal</label>
-            <select class="form-select-sm" id="inputProjectPortal" name="projectPortal">
+            <select class="form-control" id="inputProjectPortal" name="projectPortal">
               <option value="" selected>Select an Option</option>
               <option value="Align Builders Inc.">Align Builders Inc.</option>
               <option value="Balfour Beatty Construction">Balfour Beatty Construction</option>
@@ -159,19 +165,42 @@
             </select>
           </div>
         </div>
+        <div class="row justify-content-md-center">
+          <div class="form-group col-md-6 mb-3">
+            <label for="inputProjectNotes">Notes</label>
+            <textarea class="form-control" id="inputProjectNotes" name="projectNotes"></textarea>
+          </div>
+        </div>
       <div class="row justify-content-md-center">
         <div class="col-md-1">
           <button type="submit" class="btn btn-primary mb-4">Submit</button>
         </div>
       </div>
-
         <div id="errorMessage" class="alert alert-danger" style="display:none; color: red;"></div>
-        
     </form>
 
 
 <script>
-document.getElementById('myForm').addEventListener('submit', async function(event) {
+  async function populateCustomerDropdown() {
+        try {
+          const response = await fetch('/api/customers');
+          if (!response.ok) throw new Error('Failed to fetch customers');
+          const customers = await response.json();
+          
+          const selectElement = document.getElementById('inputProjectCustomer');
+          customers.forEach(customer => {
+            const option = document.createElement('option');
+            option.value = customer.customername; 
+            option.textContent = customer.customername;
+            selectElement.appendChild(option);
+          });
+        } catch (error) {
+          console.error('Error populating customer dropdown:', error);
+        }
+      }
+
+  document.addEventListener('DOMContentLoaded', populateCustomerDropdown);  
+  document.getElementById('myForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const formData = new FormData(event.target);

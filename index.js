@@ -5,12 +5,14 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
-
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const port = 3000;
 const saltRounds = 10;
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 //DB Credentials
 const db = new pg.Client({
@@ -24,7 +26,9 @@ const db = new pg.Client({
 db.connect();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'src')));
+app.use(express.static(path.join(__dirname, 'public'))); 
+
 
 //Session
 app.use(
@@ -38,17 +42,19 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-
+//View Engine
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 //Render Login Page
 app.get("/", async (req, res) => {
-    res.render("login.ejs");
+    res.render("login");
 });
 
 //Render Home Page & Check for Authentication
 app.get("/home", (req, res) => {
     if (req.isAuthenticated()) {
-    res.render("home.ejs");
+    res.render("home");
     } else {
         res.redirect("/")
     }
@@ -59,7 +65,7 @@ app.get("/customer", async (req, res) => {
     if (req.isAuthenticated()) {
         try {
             const customerData = await db.query("SELECT * FROM customers");
-            res.render("customerportal.ejs", {customerData: customerData.rows});
+            res.render("customerportal", {customerData: customerData.rows});
         } catch (err) {
             console.error("Error feting customers:", err);
             res.status(500).send("Internal Server Error");
@@ -71,7 +77,7 @@ app.get("/customer", async (req, res) => {
 //Render Admin Page
 app.get("/admin", (req, res) => {
     if (req.isAuthenticated()) {
-        res.render("admin.ejs");
+        res.render("admin");
         } else {
             res.redirect("/")
         }
@@ -80,7 +86,7 @@ app.get("/admin", (req, res) => {
 //Render NewSub Page
 app.get("/newsubcontractor", (req, res) => {
     if (req.isAuthenticated()) {
-        res.render("newsubcontractor.ejs");
+        res.render("newsubcontractor");
         } else {
             res.redirect("/")
         }
@@ -89,16 +95,26 @@ app.get("/newsubcontractor", (req, res) => {
 //Render NewCustomer Page
 app.get("/newcustomer", (req, res) => {
     if (req.isAuthenticated()) {
-        res.render("newcustomer.ejs");
+        res.render("newcustomer");
         } else {
             res.redirect("/")
         }
 });
 
+app.get('/api/customers', async (req, res) => {
+    try {
+        const result = await db.query('SELECT customername FROM customers');
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching customers:', err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 //Render NewProject Page
 app.get("/newproject", (req, res) => {
     if (req.isAuthenticated()) {
-        res.render("newproject.ejs");
+        res.render("newproject");
         } else {
             res.redirect("/")
         }
@@ -109,7 +125,7 @@ app.get("/subcontractor", async (req, res) => {
     if (req.isAuthenticated()){
     try {
         const subData = await db.query("SELECT * FROM subcontractors");
-        res.render("subcontractorportal.ejs", {subData: subData.rows});
+        res.render("subcontractorportal", {subData: subData.rows});
     } catch (err) {
         console.error("Error fetching subcontractors:", err);
         res.status(500).send("Internal Server Error");
@@ -124,7 +140,7 @@ app.get("/projects", async (req, res) => {
     if (req.isAuthenticated()){
     try {
         const projectData = await db.query("SELECT * FROM projects ORDER BY projectnumber ASC");
-        res.render("projects.ejs", {projectData: projectData.rows});
+        res.render("projects", {projectData: projectData.rows});
     } catch (err) {
         console.error("Error feting subcontractors:", err);
         res.status(500).send("Internal Server Error");
@@ -145,7 +161,7 @@ app.get('/projects/:projectnumber', async (req, res) => {
                 return res.status(404).send('Project not found');
             }
 
-            res.render('projectdetails.ejs', { project });
+            res.render('projectdetails', { project });
         } catch (err) {
             console.error("Error fetching project details:", err);
             res.status(500).send("Internal Server Error");
@@ -167,7 +183,7 @@ app.get('/customer/:customername', async (req, res) => {
                 return res.status(404).send('Customer not found');
             }
 
-            res.render('customerdetails.ejs', { customer });
+            res.render('customerdetails', { customer });
         } catch (err) {
             console.error("Error fetching customer details:", err);
             res.status(500).send("Internal Server Error");
@@ -189,7 +205,7 @@ app.get('/subcontractor/:subname', async (req, res) => {
                 return res.status(404).send('Sub not found');
             }
 
-            res.render('subcontractordetails.ejs', { sub });
+            res.render('subcontractordetails', { sub });
         } catch (err) {
             console.error("Error fetching sub details:", err);
             res.status(500).send("Internal Server Error");
@@ -203,12 +219,12 @@ app.get('/subcontractor/:subname', async (req, res) => {
 app.post('/projects/:projectnumber', async (req, res) => {
     if (req.isAuthenticated()) {
         const projectNumber = req.params.projectnumber;
-        const { dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal } = req.body;
+        const { dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes } = req.body;
 
         try {
             await db.query(
-                "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10 WHERE projectnumber = $11",
-                [dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNumber]
+                "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11 WHERE projectnumber = $12",
+                [dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, projectNumber]
             );
             res.redirect(`/projects`);
         } catch (err) {
@@ -290,7 +306,7 @@ app.post("/admin", async (req, res) => {
                 "INSERT INTO users (email, password) VALUES ($1, $2)",
                 [email, hash]
             );
-            res.render("home.ejs");
+            res.render("home");
         }
         });
         
@@ -354,10 +370,11 @@ app.post("/newproject", async (req, res) => {
     const projectZip = req.body.projectZip;
     const projectTracking = req.body.projectTracking;
     const projectPortal = req.body.projectPortal;
+    const projectNotes = req.body.projectNotes;
     try {
         await db.query(
-        "INSERT INTO projects (projectnumber, dirnumber, projectmanager, projectcontract, projectname, projectaddress, projectcity, projectstate, projectzip, projecttracking, projectportal) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
-        [projectNumber, dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal]
+        "INSERT INTO projects (projectnumber, dirnumber, projectmanager, projectcontract, projectname, projectaddress, projectcity, projectstate, projectzip, projecttracking, projectportal, projectnotes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
+        [projectNumber, dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes]
         );
         res.redirect("/projects");
     } catch (err) {
