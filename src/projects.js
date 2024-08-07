@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Initialize Tippy.js tooltips
+    // Initialize Tippy.js (Tooltips)
     tippy('[data-tippy-content]', {
-        placement: 'top',  // Tooltip position
-        animation: 'fade', // Tooltip animation
-        theme: 'light',    // Tooltip theme
-        arrow: true        // Show arrow
+        placement: 'right',  
+        animation: 'scale', 
+        theme: 'light',    
+        arrow: true ,
+        allowHTML: true
     });
 
     // Dropdown and filter functionality

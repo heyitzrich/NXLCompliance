@@ -30,14 +30,14 @@
       </div>
     
     <div class="d-flex justify-content-end">
-      <div class="dropdown d-flex gap-2 justify-content-end mb-4">
+      <div class="dropdown d-flex gap-2 justify-content-end mb-4 me-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownProjectManager" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Filter by Project Manager
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownProjectManager" id="dropdownProjectManagerMenu">
         </ul>
       </div>
-      <div class="dropdown d-flex gap-2 justify-content-end mb-4">
+      <div class="dropdown d-flex gap-2 justify-content-end mb-4 me-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownProjectCustomer" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Filter by Customer
         </button>
@@ -64,7 +64,13 @@
           <tbody id="projectTableBody">
             <% projectData.forEach(function(projectData) { %>
               <tr>
-                <td data-tippy-content="Project Notes: <%= projectData.projectnotes %>"><a href="/projects/<%= projectData.projectnumber %>"><%= projectData.projectnumber %></a></td>
+                <td data-tippy-content="<div>
+                  <p><strong>Project Notes:</strong></p>
+                  <%- projectData.projectnotes ? projectData.projectnotes
+                      .replace(/\n/g, '</p><p>')
+                      .replace(/^/, '<p>')
+                      .replace(/$/, '</p>') : '<p>No notes available.</p>' %>
+              </div>"><a href="/projects/<%= projectData.projectnumber %>"><%= projectData.projectnumber %></a></td>
                 <td><%= projectData.dirnumber %></td>
                 <td><%= projectData.projectname %></td>
                 <td><%= projectData.projectmanager %></td>

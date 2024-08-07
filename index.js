@@ -219,12 +219,15 @@ app.get('/subcontractor/:subname', async (req, res) => {
 app.post('/projects/:projectnumber', async (req, res) => {
     if (req.isAuthenticated()) {
         const projectNumber = req.params.projectnumber;
-        const { dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes } = req.body;
+        const { dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, projectCustomer } = req.body;
+        const dasFileDate = req.body.dasFileDate || null;
+        const dasOnsiteDate =  req.body.dasOnsiteDate || null;
+        const actualOnsiteDate = req.body.actualOnsiteDate || null;
 
         try {
             await db.query(
-                "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11 WHERE projectnumber = $12",
-                [dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, projectNumber]
+                "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11, projectcustomer = $12, dasfiledate = $13, dasonsitedate = $14, actualonsitedate = $15 WHERE projectnumber = $16",
+                [dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, projectCustomer, dasFileDate, dasOnsiteDate, actualOnsiteDate, projectNumber]
             );
             res.redirect(`/projects`);
         } catch (err) {
@@ -371,10 +374,15 @@ app.post("/newproject", async (req, res) => {
     const projectTracking = req.body.projectTracking;
     const projectPortal = req.body.projectPortal;
     const projectNotes = req.body.projectNotes;
+    const dasFileDate = req.body.dasFileDate || null;
+    const dasOnsiteDate = req.body.dasOnsiteDate || null;
+    const actualOnsiteDate = req.body.actualOnsiteDate || null;
+    const projectCustomer = req.body.projectCustomer;
+
     try {
         await db.query(
-        "INSERT INTO projects (projectnumber, dirnumber, projectmanager, projectcontract, projectname, projectaddress, projectcity, projectstate, projectzip, projecttracking, projectportal, projectnotes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
-        [projectNumber, dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes]
+        "INSERT INTO projects (projectnumber, dirnumber, projectmanager, projectcontract, projectname, projectaddress, projectcity, projectstate, projectzip, projecttracking, projectportal, projectnotes, dasfiledate, dasonsitedate, actualonsitedate, projectcustomer) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)",
+        [projectNumber, dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, dasFileDate, dasOnsiteDate, actualOnsiteDate, projectCustomer]
         );
         res.redirect("/projects");
     } catch (err) {
