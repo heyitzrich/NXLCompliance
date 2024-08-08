@@ -46,18 +46,46 @@ app.use(passport.session());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// Function to format date as YYYY-MM-DD
+function formatDate(date) {
+    if (!date) return '';
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function changeDate(date) {
+    if (!date) return '';
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${month}-${day}-${year}`;
+}
+
+// Pass the function to EJS templates
+app.locals.formatDate = formatDate;
+app.locals.changeDate = changeDate;
+
 //Render Login Page
 app.get("/", async (req, res) => {
     res.render("login");
 });
 
 //Render Home Page & Check for Authentication
-app.get("/home", (req, res) => {
+app.get("/home", async (req, res) => {
     if (req.isAuthenticated()) {
-    res.render("home");
-    } else {
-        res.redirect("/")
-    }
+        try {
+            const complianceData = await db.query("SELECT * FROM projects WHERE projectcprstatus = 'In Progress'")
+            res.render("home", {complianceData: complianceData.rows});
+        } catch (err) {
+            console.error("Error feting projects:", err);
+            res.status(500).send("Internal Server Error");
+        }} else {
+            res.redirect("/")
+        }
 });
 
 //Render Customer Portal Page & Pull Data from DB to Display
@@ -142,7 +170,7 @@ app.get("/projects", async (req, res) => {
         const projectData = await db.query("SELECT * FROM projects ORDER BY projectnumber ASC");
         res.render("projects", {projectData: projectData.rows});
     } catch (err) {
-        console.error("Error feting subcontractors:", err);
+        console.error("Error feting projects:", err);
         res.status(500).send("Internal Server Error");
     }} else {
         res.redirect("/")
@@ -219,17 +247,17 @@ app.get('/subcontractor/:subname', async (req, res) => {
 app.post('/projects/:projectnumber', async (req, res) => {
     if (req.isAuthenticated()) {
         const projectNumber = req.params.projectnumber;
-        const { dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, projectCustomer } = req.body;
-        const dasFileDate = req.body.dasFileDate || null;
+        const { dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, projectCustomer, projectCPRStatus } = req.body;
+        const dasFileDate = req.body.dasFileDate || null ;
         const dasOnsiteDate =  req.body.dasOnsiteDate || null;
         const actualOnsiteDate = req.body.actualOnsiteDate || null;
 
         try {
             await db.query(
-                "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11, projectcustomer = $12, dasfiledate = $13, dasonsitedate = $14, actualonsitedate = $15 WHERE projectnumber = $16",
-                [dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, projectCustomer, dasFileDate, dasOnsiteDate, actualOnsiteDate, projectNumber]
+                "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11, projectcustomer = $12, dasfiledate = $13, dasonsitedate = $14, actualonsitedate = $15, projectcprstatus = $16 WHERE projectnumber = $17",
+                [dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, projectCustomer, dasFileDate, dasOnsiteDate, actualOnsiteDate, projectCPRStatus, projectNumber]
             );
-            res.redirect(`/projects`);
+            res.redirect(`/home`);
         } catch (err) {
             console.error("Error updating project:", err);
             res.status(500).send("Internal Server Error");
@@ -378,11 +406,12 @@ app.post("/newproject", async (req, res) => {
     const dasOnsiteDate = req.body.dasOnsiteDate || null;
     const actualOnsiteDate = req.body.actualOnsiteDate || null;
     const projectCustomer = req.body.projectCustomer;
+    const projectCPRStatus = req.body.projectCPRStatus;
 
     try {
         await db.query(
-        "INSERT INTO projects (projectnumber, dirnumber, projectmanager, projectcontract, projectname, projectaddress, projectcity, projectstate, projectzip, projecttracking, projectportal, projectnotes, dasfiledate, dasonsitedate, actualonsitedate, projectcustomer) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)",
-        [projectNumber, dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, dasFileDate, dasOnsiteDate, actualOnsiteDate, projectCustomer]
+        "INSERT INTO projects (projectnumber, dirnumber, projectmanager, projectcontract, projectname, projectaddress, projectcity, projectstate, projectzip, projecttracking, projectportal, projectnotes, dasfiledate, dasonsitedate, actualonsitedate, projectcustomer, projectcprstatus) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)",
+        [projectNumber, dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, dasFileDate, dasOnsiteDate, actualOnsiteDate, projectCustomer, projectCPRStatus]
         );
         res.redirect("/projects");
     } catch (err) {
