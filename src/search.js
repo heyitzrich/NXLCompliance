@@ -1,21 +1,31 @@
-// Search functionality
 document.getElementById("searchInput").addEventListener("keyup", function() {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("searchInput");
-    filter = input.value.toUpperCase();
-    table = document.querySelector(".table");
-    tr = table.getElementsByTagName("tr");
+  var input, filter, table, tr, td, i, j, txtValue;
+  input = document.getElementById("searchInput");
+  filter = input.value.toUpperCase();
+  table = document.querySelector(".table");
+  
+  if (!table) return;
+  tr = table.getElementsByTagName("tr");
 
-    // Loop through all table rows, and hide those that don't match the search query
-    for (i = 0; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td")[0]; 
-      if (td) {
-        txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-          tr[i].style.display = "";
-        } else {
-          tr[i].style.display = "none";
-        }
+  for (i = 0; i < tr.length; i++) {
+      if (tr[i].getElementsByTagName("th").length > 0) {
+          continue; 
       }
-    }
-  });
+      var showRow = false; 
+      td = tr[i].getElementsByTagName("td");
+      for (j = 0; j < td.length; j++) {
+          if (td[j]) {
+              txtValue = td[j].textContent || td[j].innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                  showRow = true; 
+                  break; 
+              }
+          }
+      }
+      if (showRow) {
+          tr[i].style.display = "";
+      } else {
+          tr[i].style.display = "none";
+      }
+  }
+});

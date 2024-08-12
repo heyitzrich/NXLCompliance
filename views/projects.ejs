@@ -12,6 +12,15 @@
         padding: 0.5rem; 
         font-size: 1rem; 
       }
+      .status-inprogress {
+        color: teal;
+      }
+      .status-final {
+        color: black;
+      }
+      .status-open {
+        color: blue
+      }
   </style>
 </head>
 <body>
@@ -57,8 +66,7 @@
               <th>Customer</th>
               <th>City</th>
               <th>Contract/PO </th>
-              <th>Tracking</th>
-              <th>LCP Portal</th>
+              <th>CPR Status</th>
             </tr>
           </thead>
           <tbody id="projectTableBody">
@@ -77,8 +85,14 @@
                 <td><%= projectData.projectcustomer %></td>
                 <td><%= projectData.projectcity %></td>   
                 <td><%= projectData.projectcontract %></td>
-                <td><%= projectData.projecttracking %></td>
-                <td><%= projectData.projectportal %></td>                           
+                <td>
+                  <span class="
+                    <% if (projectData.projectcprstatus === 'In Progress') { %>status-inprogress<% } %>
+                    <% if (projectData.projectcprstatus === 'Final') { %>status-final<% } %>
+                    <% if (projectData.projectcprstatus === 'Open') { %>status-open<% } %>"> 
+                    <%= projectData.projectcprstatus %>
+                  </span>
+                </td>                        
               </tr>
             <% }); %>
           </tbody>

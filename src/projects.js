@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Populate Project Customer dropdown
     rows.forEach(row => {
         var cells = row.getElementsByTagName("td");
-        if (cells.length > 4) { // Ensure there is enough columns
+        if (cells.length > 4) { 
             var customer = cells[4].textContent.trim();
             projectCustomerSet.add(customer);
         }

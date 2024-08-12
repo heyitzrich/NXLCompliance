@@ -78,7 +78,7 @@ app.get("/", async (req, res) => {
 app.get("/home", async (req, res) => {
     if (req.isAuthenticated()) {
         try {
-            const complianceData = await db.query("SELECT * FROM projects WHERE projectcprstatus = 'In Progress'")
+            const complianceData = await db.query("SELECT * FROM projects WHERE projectcprstatus = 'In Progress' ORDER BY projectnumber ASC")
             res.render("home", {complianceData: complianceData.rows});
         } catch (err) {
             console.error("Error feting projects:", err);
@@ -251,11 +251,12 @@ app.post('/projects/:projectnumber', async (req, res) => {
         const dasFileDate = req.body.dasFileDate || null ;
         const dasOnsiteDate =  req.body.dasOnsiteDate || null;
         const actualOnsiteDate = req.body.actualOnsiteDate || null;
+        const payrollDate = req.body.payrollDate || null;
 
         try {
             await db.query(
-                "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11, projectcustomer = $12, dasfiledate = $13, dasonsitedate = $14, actualonsitedate = $15, projectcprstatus = $16 WHERE projectnumber = $17",
-                [dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, projectCustomer, dasFileDate, dasOnsiteDate, actualOnsiteDate, projectCPRStatus, projectNumber]
+                "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11, projectcustomer = $12, dasfiledate = $13, dasonsitedate = $14, actualonsitedate = $15, projectcprstatus = $16, payrolldate = $17 WHERE projectnumber = $18",
+                [dirNumber, projectManager, projectContract, projectName, projectAddress, projectCity, projectState, projectZip, projectTracking, projectPortal, projectNotes, projectCustomer, dasFileDate, dasOnsiteDate, actualOnsiteDate, projectCPRStatus, payrollDate, projectNumber]
             );
             res.redirect(`/home`);
         } catch (err) {

@@ -129,6 +129,7 @@
                     <option value="DIR Only" <%= project.projecttracking === 'DIR Only' ? 'selected' : '' %>>DIR Only</option>
                     <option value="DIR & LCP" <%= project.projecttracking === 'DIR & LCP' ? 'selected' : '' %>>DIR & LCP</option>
                     <option value="DIR, LCP, & NXL Dropbox" <%= project.projecttracking === 'DIR, LCP, & NXL Dropbox' ? 'selected' : '' %>>DIR, LCP, & NXL Dropbox</option>
+                    <option value="NXL Dropbox Only" <%= project.projecttracking === 'NXL Dropbox Only' ? 'selected' : '' %>>NXL Dropbox Only</option>
                 </select>
             </div>
             <div class="form-group col-md-3 mb-3">
@@ -173,14 +174,18 @@
             </div>
         </div>
         <div class="row justify-content-md-center">
-            <div class="form-group col-md-6">
-            <label for="inputProjectCPRStatus">CPR Status</label>
-            <select class="form-control" id="inputProjectCPRStatus" name="projectCPRStatus">
-                <option value="">Select an Option</option>
-                <option value="Open" <%= project.projectcprstatus === 'Open' ? 'selected' : '' %>>Open</option>
-                <option value="In Progress" <%= project.projectcprstatus === 'In Progress' ? 'selected' : '' %>>In Progress</option>
-                <option value="Final" <%= project.projectcprstatus === 'Final' ? 'selected' : '' %>>Final</option>
-            </select>
+            <div class="form-group col-md-3">
+                <label for="inputProjectCPRStatus">CPR Status</label>
+                <select class="form-control" id="inputProjectCPRStatus" name="projectCPRStatus">
+                    <option value="">Select an Option</option>
+                    <option value="Open" <%= project.projectcprstatus === 'Open' ? 'selected' : '' %>>Open</option>
+                    <option value="In Progress" <%= project.projectcprstatus === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                    <option value="Final" <%= project.projectcprstatus === 'Final' ? 'selected' : '' %>>Final</option>
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputPayrollDate">Latest Payroll Date</label>
+                <input type ="date" id="inputPayrollDate" class="form-control" name="payrollDate" value="<%= formatDate(project.payrolldate) %>">
             </div>
         </div>
 
