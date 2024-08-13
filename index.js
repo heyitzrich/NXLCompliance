@@ -16,14 +16,12 @@ const port = 3000;
 const saltRounds = 10;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const connectionString = process.env.DATABASE_URL;
+
 
 //DB Credentials
 const db = new pg.Client({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+    connectionString: connectionString,
 });
 
 db.connect();
@@ -66,10 +64,6 @@ function changeDate(date) {
   const day = String(d.getDate()).padStart(2, "0");
   return `${month}-${day}-${year}`;
 }
-
-// Pass the function to EJS templates
-app.locals.formatDate = formatDate;
-app.locals.changeDate = changeDate;
 
 //Render Login Page
 app.get("/", async (req, res) => {
