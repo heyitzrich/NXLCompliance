@@ -8,6 +8,7 @@ import { Strategy } from "passport-local";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
+import moment from "moment";
 
 dotenv.config();
 
@@ -17,7 +18,6 @@ const saltRounds = 10;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const connectionString = process.env.DATABASE_URL;
-
 
 //DB Credentials
 const db = new pg.Client({
@@ -46,25 +46,6 @@ app.use(passport.session());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-// Function to format date as YYYY-MM-DD
-function formatDate(date) {
-  if (!date) return "";
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function changeDate(date) {
-  if (!date) return "";
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${month}-${day}-${year}`;
-}
-
 //Render Login Page
 app.get("/", async (req, res) => {
   res.render("login");
@@ -77,9 +58,16 @@ app.get("/home", async (req, res) => {
       const complianceData = await db.query(
         "SELECT * FROM projects WHERE projectcprstatus = 'In Progress' ORDER BY projectnumber ASC"
       );
-      res.render("home", { complianceData: complianceData.rows });
+      const formattedComplianceData = complianceData.rows.map(project => ({
+        ...project,
+        dasfiledate: project.dasfiledate ? moment(project.dasfiledate).format('MM/DD/YYYY') : null,
+        dasonsitedate: project.dasonsitedate ? moment(project.dasonsitedate).format('MM/DD/YYYY') : null,
+        actualonsitedate: project.actualonsitedate ? moment(project.actualonsitedate).format('MM/DD/YYYY') : null,
+        payrolldate: project.payrolldate ? moment(project.payrolldate).format('MM/DD/YYYY') : null,
+      }));
+      res.render("home", { complianceData: formattedComplianceData });
     } catch (err) {
-      console.error("Error feting projects:", err);
+      console.error("Error fetching projects:", err);
       res.status(500).send("Internal Server Error");
     }
   } else {
@@ -419,7 +407,15 @@ app.post("/admin", async (req, res) => {
             "INSERT INTO users (email, password) VALUES ($1, $2)",
             [email, hash]
           );
-          res.render("home");
+          try {
+            const complianceData = await db.query(
+              "SELECT * FROM projects WHERE projectcprstatus = 'In Progress' ORDER BY projectnumber ASC"
+            );
+            res.render("home", { complianceData: complianceData.rows });
+          } catch (err) {
+            console.error("Error feting projects:", err);
+            res.status(500).send("Internal Server Error");
+          }
         }
       });
     }
@@ -427,6 +423,7 @@ app.post("/admin", async (req, res) => {
     console.log(err);
   }
 });
+
 
 //Adds information entered in NewCustomer page to DB
 app.post("/newcustomer", async (req, res) => {
@@ -502,9 +499,9 @@ app.post("/newproject", async (req, res) => {
   const projectTracking = req.body.projectTracking;
   const projectPortal = req.body.projectPortal;
   const projectNotes = req.body.projectNotes;
-  const dasFileDate = req.body.dasFileDate || null;
-  const dasOnsiteDate = req.body.dasOnsiteDate || null;
-  const actualOnsiteDate = req.body.actualOnsiteDate || null;
+  const dasFileDate = req.body.dasFileDate ? moment(req.body.dasFileDate).format('YYYY-MM-DD') : null;
+  const dasOnsiteDate = req.body.dasOnsiteDate ? moment(req.body.dasOnsiteDate).format('YYYY-MM-DD') : null;
+  const actualOnsiteDate = req.body.actualOnsiteDate ? moment(req.body.actualOnsiteDate).format('YYYY-MM-DD') : null;
   const projectCustomer = req.body.projectCustomer;
   const projectCPRStatus = req.body.projectCPRStatus;
 
