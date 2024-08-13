@@ -9,6 +9,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import moment from "moment";
+import { CronJob } from "cron";
+import https from "https";
 
 dotenv.config();
 
@@ -18,10 +20,37 @@ const saltRounds = 10;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const connectionString = process.env.DATABASE_URL;
+const backendUrl = "https://lhnhchvatqlmsgqrwkrw.supabase.co";
+
+const job = new CronJob("*/14 * * * *", function () {
+  console.log("Hitting backend API to prevent sleeping");
+
+  https
+    .get(backendUrl, (res) => {
+      let data = "";
+
+      // Handle incoming data
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
+
+      // Handle response end
+      res.on("end", () => {
+        if (res.statusCode === 200) {
+          console.log("Request successful");
+        } else {
+          console.log(`Request failed with status code: ${res.statusCode}`);
+        }
+      });
+    })
+    .on("error", (e) => {
+      console.error(`Request error: ${e.message}`);
+    });
+});
 
 //DB Credentials
 const db = new pg.Client({
-    connectionString: connectionString,
+  connectionString: connectionString,
 });
 
 db.connect();
@@ -36,7 +65,7 @@ app.use(
     secret: "TOPSECRET",
     resave: false,
     saveUninitialized: true,
-  })
+  }),
 );
 
 app.use(passport.initialize());
@@ -56,14 +85,22 @@ app.get("/home", async (req, res) => {
   if (req.isAuthenticated()) {
     try {
       const complianceData = await db.query(
-        "SELECT * FROM projects WHERE projectcprstatus = 'In Progress' ORDER BY projectnumber ASC"
+        "SELECT * FROM projects WHERE projectcprstatus = 'In Progress' ORDER BY projectnumber ASC",
       );
-      const formattedComplianceData = complianceData.rows.map(project => ({
+      const formattedComplianceData = complianceData.rows.map((project) => ({
         ...project,
-        dasfiledate: project.dasfiledate ? moment(project.dasfiledate).format('MM/DD/YYYY') : null,
-        dasonsitedate: project.dasonsitedate ? moment(project.dasonsitedate).format('MM/DD/YYYY') : null,
-        actualonsitedate: project.actualonsitedate ? moment(project.actualonsitedate).format('MM/DD/YYYY') : null,
-        payrolldate: project.payrolldate ? moment(project.payrolldate).format('MM/DD/YYYY') : null,
+        dasfiledate: project.dasfiledate
+          ? moment(project.dasfiledate).format("MM/DD/YYYY")
+          : null,
+        dasonsitedate: project.dasonsitedate
+          ? moment(project.dasonsitedate).format("MM/DD/YYYY")
+          : null,
+        actualonsitedate: project.actualonsitedate
+          ? moment(project.actualonsitedate).format("MM/DD/YYYY")
+          : null,
+        payrolldate: project.payrolldate
+          ? moment(project.payrolldate).format("MM/DD/YYYY")
+          : null,
       }));
       res.render("home", { complianceData: formattedComplianceData });
     } catch (err) {
@@ -156,7 +193,7 @@ app.get("/projects", async (req, res) => {
   if (req.isAuthenticated()) {
     try {
       const projectData = await db.query(
-        "SELECT * FROM projects ORDER BY projectnumber ASC"
+        "SELECT * FROM projects ORDER BY projectnumber ASC",
       );
       res.render("projects", { projectData: projectData.rows });
     } catch (err) {
@@ -175,7 +212,7 @@ app.get("/projects/:projectnumber", async (req, res) => {
     try {
       const projectResult = await db.query(
         "SELECT * FROM projects WHERE projectnumber = $1",
-        [projectNumber]
+        [projectNumber],
       );
       const project = projectResult.rows[0];
 
@@ -200,7 +237,7 @@ app.get("/customer/:customername", async (req, res) => {
     try {
       const customerResult = await db.query(
         "SELECT * FROM customers WHERE customername = $1",
-        [customerName]
+        [customerName],
       );
       const customer = customerResult.rows[0];
 
@@ -225,7 +262,7 @@ app.get("/subcontractor/:subname", async (req, res) => {
     try {
       const subResult = await db.query(
         "SELECT * FROM subcontractors WHERE subname = $1",
-        [subName]
+        [subName],
       );
       const sub = subResult.rows[0];
 
@@ -289,7 +326,7 @@ app.post("/projects/:projectnumber", async (req, res) => {
           projectCPRStatus,
           payrollDate,
           projectNumber,
-        ]
+        ],
       );
       res.redirect(`/home`);
     } catch (err) {
@@ -327,7 +364,7 @@ app.post("/customer/:customername", async (req, res) => {
           customerContactNumber,
           customerContactEmail,
           customerName,
-        ]
+        ],
       );
       res.redirect(`/customer`);
     } catch (err) {
@@ -365,7 +402,7 @@ app.post("/subcontractor/:subname", async (req, res) => {
           subContactNumber,
           subContactEmail,
           subName,
-        ]
+        ],
       );
       res.redirect(`/subcontractor`);
     } catch (err) {
@@ -383,7 +420,7 @@ app.post(
   passport.authenticate("local", {
     successRedirect: "/home",
     failureRedirect: "",
-  })
+  }),
 );
 
 //Passing Data from Admin Page to Create New User Info
@@ -405,11 +442,11 @@ app.post("/admin", async (req, res) => {
         } else {
           const result = await db.query(
             "INSERT INTO users (email, password) VALUES ($1, $2)",
-            [email, hash]
+            [email, hash],
           );
           try {
             const complianceData = await db.query(
-              "SELECT * FROM projects WHERE projectcprstatus = 'In Progress' ORDER BY projectnumber ASC"
+              "SELECT * FROM projects WHERE projectcprstatus = 'In Progress' ORDER BY projectnumber ASC",
             );
             res.render("home", { complianceData: complianceData.rows });
           } catch (err) {
@@ -423,7 +460,6 @@ app.post("/admin", async (req, res) => {
     console.log(err);
   }
 });
-
 
 //Adds information entered in NewCustomer page to DB
 app.post("/newcustomer", async (req, res) => {
@@ -447,7 +483,7 @@ app.post("/newcustomer", async (req, res) => {
         customerContactName,
         customerContactNumber,
         customerContactEmail,
-      ]
+      ],
     );
     res.redirect("/customer");
   } catch (err) {
@@ -477,7 +513,7 @@ app.post("/newsubcontractor", async (req, res) => {
         subContactName,
         subContactNumber,
         subContactEmail,
-      ]
+      ],
     );
     res.redirect("/subcontractor");
   } catch (err) {
@@ -499,9 +535,15 @@ app.post("/newproject", async (req, res) => {
   const projectTracking = req.body.projectTracking;
   const projectPortal = req.body.projectPortal;
   const projectNotes = req.body.projectNotes;
-  const dasFileDate = req.body.dasFileDate ? moment(req.body.dasFileDate).format('YYYY-MM-DD') : null;
-  const dasOnsiteDate = req.body.dasOnsiteDate ? moment(req.body.dasOnsiteDate).format('YYYY-MM-DD') : null;
-  const actualOnsiteDate = req.body.actualOnsiteDate ? moment(req.body.actualOnsiteDate).format('YYYY-MM-DD') : null;
+  const dasFileDate = req.body.dasFileDate
+    ? moment(req.body.dasFileDate).format("YYYY-MM-DD")
+    : null;
+  const dasOnsiteDate = req.body.dasOnsiteDate
+    ? moment(req.body.dasOnsiteDate).format("YYYY-MM-DD")
+    : null;
+  const actualOnsiteDate = req.body.actualOnsiteDate
+    ? moment(req.body.actualOnsiteDate).format("YYYY-MM-DD")
+    : null;
   const projectCustomer = req.body.projectCustomer;
   const projectCPRStatus = req.body.projectCPRStatus;
 
@@ -526,32 +568,26 @@ app.post("/newproject", async (req, res) => {
         actualOnsiteDate,
         projectCustomer,
         projectCPRStatus,
-      ]
+      ],
     );
     res.redirect("/projects");
   } catch (err) {
     console.error("Error inserting project:", err);
 
     if (err.code === "23505") {
-      res
-        .status(400)
-        .json({
-          error:
-            "A project with this identifier already exists. Please use a different identifier.",
-        });
+      res.status(400).json({
+        error:
+          "A project with this identifier already exists. Please use a different identifier.",
+      });
     } else if (err.code === "23502") {
-      res
-        .status(400)
-        .json({
-          error:
-            "One or more required fields are missing or invalid. Please check your input and try again.",
-        });
+      res.status(400).json({
+        error:
+          "One or more required fields are missing or invalid. Please check your input and try again.",
+      });
     } else {
-      res
-        .status(500)
-        .json({
-          error: "An unexpected error occurred. Please try again later.",
-        });
+      res.status(500).json({
+        error: "An unexpected error occurred. Please try again later.",
+      });
     }
   }
 });
@@ -584,7 +620,7 @@ passport.use(
     } catch (err) {
       console.log(err);
     }
-  })
+  }),
 );
 
 passport.serializeUser((user, cb) => {
