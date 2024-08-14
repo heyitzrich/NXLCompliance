@@ -9,8 +9,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import moment from "moment";
-import { CronJob } from "cron";
-import https from "https";
 
 dotenv.config();
 
@@ -20,33 +18,8 @@ const saltRounds = 10;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const connectionString = process.env.DATABASE_URL;
-const backendUrl = "https://lhnhchvatqlmsgqrwkrw.supabase.co";
 
-const job = new CronJob("*/14 * * * *", function () {
-  console.log("Hitting backend API to prevent sleeping");
 
-  https
-    .get(backendUrl, (res) => {
-      let data = "";
-
-      // Handle incoming data
-      res.on("data", (chunk) => {
-        data += chunk;
-      });
-
-      // Handle response end
-      res.on("end", () => {
-        if (res.statusCode === 200) {
-          console.log("Request successful");
-        } else {
-          console.log(`Request failed with status code: ${res.statusCode}`);
-        }
-      });
-    })
-    .on("error", (e) => {
-      console.error(`Request error: ${e.message}`);
-    });
-});
 
 //DB Credentials
 const db = new pg.Client({
@@ -274,6 +247,26 @@ app.get("/subcontractor/:subname", async (req, res) => {
     } catch (err) {
       console.error("Error fetching sub details:", err);
       res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.redirect("/");
+  }
+});
+
+//Handle Payroll Updates on Home/Compliance Tracker
+app.post("/update-payroll-date", async (req, res) => {
+  if (req.isAuthenticated()) {
+    const { projectNumber, newDate } = req.body;
+
+    try {
+      await db.query(
+        "UPDATE projects SET payrolldate = $1 WHERE projectnumber = $2",
+        [newDate, projectNumber]
+      );
+      res.status(200).send('Payroll date updated successfully');
+    } catch (err) {
+      console.error("Error updating payroll date:", err);
+      res.status(500).send("Failed to update payroll date");
     }
   } else {
     res.redirect("/");
