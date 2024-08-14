@@ -8,13 +8,11 @@ document.addEventListener("DOMContentLoaded", function() {
         allowHTML: true
     });
 
-    // Dropdown and filter functionality
     var projectManagerMenu = document.getElementById("dropdownProjectManagerMenu");
     var projectManagerSet = new Set();
     var projectCustomerMenu = document.getElementById("dropdownProjectCustomerMenu");
     var projectCustomerSet = new Set();
 
-    // Extract unique project managers from the table data
     var rows = document.querySelectorAll(".table tbody tr");
     rows.forEach(row => {
         var cells = row.getElementsByTagName("td");
@@ -24,14 +22,12 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Populate Project Manager dropdown
     projectManagerSet.forEach(manager => {
         var option = document.createElement("li");
         option.innerHTML = `<a class="dropdown-item" href="#">${manager}</a>`;
         projectManagerMenu.appendChild(option);
     });
 
-    // Populate Project Customer dropdown
     rows.forEach(row => {
         var cells = row.getElementsByTagName("td");
         if (cells.length > 4) { 
@@ -46,7 +42,6 @@ document.addEventListener("DOMContentLoaded", function() {
         projectCustomerMenu.appendChild(option);
     });
 
-    // Event listener for dropdown items
     projectManagerMenu.addEventListener("click", function(event) {
         if (event.target && event.target.matches("a.dropdown-item")) {
             event.preventDefault();
@@ -63,7 +58,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Function to filter table rows based on dropdown selection
     function filterTable(filterType, filterValue) {
         var rows = document.querySelectorAll(".table tbody tr");
         let found = false;
@@ -85,7 +79,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!found) noResultsFound();
     }
 
-    // Notify user if no matching results found
     function noResultsFound() {
         alert("No results found for the selected filter or search query.");
     }
