@@ -27,17 +27,12 @@
         <h1 class="content text-center">Project Portal</h1>
 
         
-    <div class="d-flex gap-2 justify-content-left py-5 content" >
+    <div class="d-flex gap-2 content" >
         <a href="/newproject"><button class="btn btn-primary d-inline-flex align-items-center" type="button">
           Add New Project
           <svg class="bi ms-1 " width="20" height="20"><use xlink:href="#arrow-right-short"></use></svg>
         </button></a>
     </div>
-    
-      <div class="d-flex mb-3">
-          <input type="text" id="searchInput" class="form-control search-bar content" placeholder="Search by Project Number" style="width:100%">
-      </div>
-    
     <div class="d-flex justify-content-end">
       <div class="dropdown d-flex gap-2 justify-content-end mb-4 me-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownProjectManager" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -54,7 +49,9 @@
         </ul>
       </div>
     </div>
-
+    <div class="d-flex mb-3">
+      <input type="text" id="searchInput" class="form-control search-bar content" placeholder="Search by Project Number, DIR or Project Name" style="width:100%">
+    </div>
     <div class=" d-flex">
         <table class="table content table-auto table-striped table-hover" style="table-layout: auto; width:100%;">
           <thead>
@@ -65,7 +62,7 @@
               <th>Project Manager</th>
               <th>Customer</th>
               <th>City</th>
-              <th>Contract/PO </th>
+              <th>Contract/PO</th>
               <th>CPR Status</th>
             </tr>
           </thead>
