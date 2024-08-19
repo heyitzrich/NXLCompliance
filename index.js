@@ -19,8 +19,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const connectionString = process.env.DATABASE_URL;
 
-
-
 //DB Credentials
 const db = new pg.Client({
   connectionString: connectionString,
@@ -74,7 +72,7 @@ app.get("/home", async (req, res) => {
 app.get("/customer", async (req, res) => {
   if (req.isAuthenticated()) {
     try {
-      const customerData = await db.query("SELECT * FROM customers");
+      const customerData = await db.query("SELECT * FROM customers ORDER BY customername ASC");
       res.render("customerportal", { customerData: customerData.rows });
     } catch (err) {
       console.error("Error feting customers:", err);
@@ -135,7 +133,7 @@ app.get("/newproject", (req, res) => {
 app.get("/subcontractor", async (req, res) => {
   if (req.isAuthenticated()) {
     try {
-      const subData = await db.query("SELECT * FROM subcontractors");
+      const subData = await db.query("SELECT * FROM subcontractors ORDER BY subname ASC");
       res.render("subcontractorportal", { subData: subData.rows });
     } catch (err) {
       console.error("Error fetching subcontractors:", err);
