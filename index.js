@@ -60,22 +60,7 @@ app.get("/home", async (req, res) => {
       const complianceData = await db.query(
         "SELECT * FROM projects WHERE projectcprstatus = 'In Progress' ORDER BY projectnumber ASC",
       );
-      const formattedComplianceData = complianceData.rows.map((project) => ({
-        ...project,
-        dasfiledate: project.dasfiledate
-          ? moment(project.dasfiledate).format("MM/DD/YYYY")
-          : null,
-        dasonsitedate: project.dasonsitedate
-          ? moment(project.dasonsitedate).format("MM/DD/YYYY")
-          : null,
-        actualonsitedate: project.actualonsitedate
-          ? moment(project.actualonsitedate).format("MM/DD/YYYY")
-          : null,
-        payrolldate: project.payrolldate
-          ? moment(project.payrolldate).format("MM/DD/YYYY")
-          : null,
-      }));
-      res.render("home", { complianceData: formattedComplianceData });
+      res.render("home", { complianceData: complianceData.rows });
     } catch (err) {
       console.error("Error fetching projects:", err);
       res.status(500).send("Internal Server Error");
@@ -292,10 +277,18 @@ app.post("/projects/:projectnumber", async (req, res) => {
       projectCustomer,
       projectCPRStatus,
     } = req.body;
-    const dasFileDate = req.body.dasFileDate || null;
-    const dasOnsiteDate = req.body.dasOnsiteDate || null;
-    const actualOnsiteDate = req.body.actualOnsiteDate || null;
-    const payrollDate = req.body.payrollDate || null;
+    const dasFileDate = req.body.dasFileDate
+    ? moment(req.body.dasFileDate).format("YYYY-MM-DD")
+    : null;
+  const dasOnsiteDate = req.body.dasOnsiteDate
+    ? moment(req.body.dasOnsiteDate).format("YYYY-MM-DD")
+    : null;
+  const actualOnsiteDate = req.body.actualOnsiteDate
+    ? moment(req.body.actualOnsiteDate).format("YYYY-MM-DD")
+    : null;
+    const payrollDate = req.body.payrollDate
+    ? moment(req.body.payrollDate).format("YYYY-MM-DD")
+    : null;
 
     try {
       await db.query(

@@ -1,75 +1,82 @@
 document.addEventListener("DOMContentLoaded", function() {
     // Initialize Tippy.js (Tooltips)
     tippy('[data-tippy-content]', {
-        placement: 'right',  
-        animation: 'scale', 
-        theme: 'light',    
-        arrow: true ,
+        placement: 'right',
+        animation: 'perspective',
+        theme: 'material',
+        arrow: true,
         allowHTML: true
     });
 
-    var projectManagerMenu = document.getElementById("dropdownProjectManagerMenu");
-    var projectManagerSet = new Set();
-    var projectCustomerMenu = document.getElementById("dropdownProjectCustomerMenu");
-    var projectCustomerSet = new Set();
+    const projectManagerMenu = document.getElementById("dropdownProjectManagerMenu");
+    const projectCustomerMenu = document.getElementById("dropdownProjectCustomerMenu");
 
-    var rows = document.querySelectorAll(".table tbody tr");
-    rows.forEach(row => {
-        var cells = row.getElementsByTagName("td");
-        if (cells.length > 3) {
-            var manager = cells[3].textContent.trim();
-            projectManagerSet.add(manager);
-        }
-    });
+    if (!projectManagerMenu || !projectCustomerMenu) {
+        console.error("Dropdown menus not found.");
+        return;
+    }
 
-    projectManagerSet.forEach(manager => {
-        var option = document.createElement("li");
-        option.innerHTML = `<a class="dropdown-item" href="#">${manager}</a>`;
-        projectManagerMenu.appendChild(option);
-    });
+    const projectManagerSet = new Set();
+    const projectCustomerSet = new Set();
+
+    const rows = document.querySelectorAll(".table tbody tr");
+
+    if (rows.length === 0) {
+        console.warn("No rows found in the table.");
+    }
 
     rows.forEach(row => {
-        var cells = row.getElementsByTagName("td");
-        if (cells.length > 4) { 
-            var customer = cells[4].textContent.trim();
-            projectCustomerSet.add(customer);
-        }
+    
+        const managerCell = row.querySelector("#projectManagerList");
+        const customerCell = row.querySelector("#customerList");
+
+        const manager = managerCell ? managerCell.textContent.trim() : '';
+        const customer = customerCell ? customerCell.textContent.trim() : '';
+
+        if (manager) projectManagerSet.add(manager);
+        if (customer) projectCustomerSet.add(customer);
     });
 
-    projectCustomerSet.forEach(customer => {
-        var option = document.createElement("li");
-        option.innerHTML = `<a class="dropdown-item" href="#">${customer}</a>`;
-        projectCustomerMenu.appendChild(option);
-    });
+    if (projectManagerSet.size === 0) {
+        console.warn("No project managers found.");
+    }
 
-    projectManagerMenu.addEventListener("click", function(event) {
+    if (projectCustomerSet.size === 0) {
+        console.warn("No project customers found.");
+    }
+
+    populateDropdown(projectManagerMenu, projectManagerSet);
+    populateDropdown(projectCustomerMenu, projectCustomerSet);
+
+    projectManagerMenu.addEventListener("click", event => handleDropdownClick(event, 'manager'));
+    projectCustomerMenu.addEventListener("click", event => handleDropdownClick(event, 'customer'));
+
+    function populateDropdown(menu, itemsSet) {
+        itemsSet.forEach(item => {
+            const option = document.createElement("li");
+            option.innerHTML = `<a class="dropdown-item" href="#">${item}</a>`;
+            menu.appendChild(option);
+        });
+    }
+
+    function handleDropdownClick(event, filterType) {
         if (event.target && event.target.matches("a.dropdown-item")) {
             event.preventDefault();
-            var filterValue = event.target.textContent;
-            filterTable('manager', filterValue);
+            const filterValue = event.target.textContent;
+            filterTable(filterType, filterValue);
         }
-    });
-
-    projectCustomerMenu.addEventListener("click", function(event) {
-        if (event.target && event.target.matches("a.dropdown-item")) {
-            event.preventDefault();
-            var filterValue = event.target.textContent;
-            filterTable('customer', filterValue);
-        }
-    });
+    }
 
     function filterTable(filterType, filterValue) {
-        var rows = document.querySelectorAll(".table tbody tr");
+        const rows = document.querySelectorAll(".table tbody tr");
         let found = false;
         rows.forEach(row => {
-            var cells = row.getElementsByTagName("td");
-            var manager = cells.length > 3 ? cells[3].textContent.trim() : '';
-            var customer = cells.length > 4 ? cells[4].textContent.trim() : '';
+            const cells = row.getElementsByTagName("td");
+            const manager = cells.length > 4 ? cells[4].textContent.trim() : '';
+            const customer = cells.length > 5 ? cells[5].textContent.trim() : '';
 
-            if (filterType === 'manager' && (manager === filterValue || filterValue === '')) {
-                row.style.display = "";
-                found = true;
-            } else if (filterType === 'customer' && (customer === filterValue || filterValue === '')) {
+            if ((filterType === 'manager' && (manager === filterValue || filterValue === ''))
+                || (filterType === 'customer' && (customer === filterValue || filterValue === ''))) {
                 row.style.display = "";
                 found = true;
             } else {

@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     const modalElement = document.getElementById('editPayrollDateModal');
     const modal = new bootstrap.Modal(modalElement);
@@ -6,29 +5,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const projectNumberInput = document.getElementById('projectNumberInput');
     const form = document.getElementById('editPayrollDateForm');
 
-function formatDateForDisplay(dateStr) {
-    const [year, month, day] = dateStr.split('-');
-    return `${month}-${day}-${year}`;
-}
-
     document.querySelectorAll('.payroll-date').forEach(cell => {
         cell.addEventListener('click', function() {
             const projectNumber = this.dataset.projectNumber;
             const payrollDate = this.dataset.payrollDate;
-
+            
+            
             payrollDateInput.value = payrollDate;
             projectNumberInput.value = projectNumber;
 
             modal.show();
         });
     });
+    function hideModal() {
+        modal.hide();
+        document.body.classList.remove('modal-open');
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+    }
 
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
 
-        const newDate = formatDateForDisplay(payrollDateInput.value);
+        const newDate = payrollDateInput.value;
         const projectNumber = projectNumberInput.value;
-
 
         try {
             const response = await updatePayrollDate(projectNumber, newDate);
@@ -39,35 +41,43 @@ function formatDateForDisplay(dateStr) {
                 if (cell) {
                     cell.innerText = newDate;
                     cell.setAttribute('data-payroll-date', newDate);
-                    updateDaysOld(cell);  // Update the "days old" display
+                    updateDaysOld(cell);
                 } else {
                     console.error(`Table cell with project number ${projectNumber} not found.`);
                 }
-                modal.hide();
+                hideModal();
             } else {
                 const errorText = await response.text();
-                alert(`Failed to update the payroll date: ${errorText}`);
+                showAlert(`Failed to update the payroll date: ${errorText}`, 'danger');
             }
         } catch (error) {
             console.error('Error updating payroll date:', error);
-            alert('An error occurred while updating the payroll date.');
+            showAlert('An error occurred while updating the payroll date.', 'danger');
         }
     });
 
-
-
     async function updatePayrollDate(projectNumber, newDate) {
-        const response = await fetch('/update-payroll-date', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                projectNumber: projectNumber,
-                newDate: newDate
-            })
-        });
-        return response;
+        try {
+            const response = await fetch('/update-payroll-date', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    projectNumber: projectNumber,
+                    newDate: newDate
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server responded with status ${response.status}`);
+            }
+            
+            return response;
+        } catch (error) {
+            console.error('Fetch error:', error);
+            throw error;
+        }
     }
 
     function updateDaysOld(cell) {
@@ -87,7 +97,21 @@ function formatDateForDisplay(dateStr) {
             cell.classList.remove('text-danger');
         }
 
-        cell.innerHTML = cell.innerHTML.replace(/\(\d+\)$/, '') + daysOldText; // Replace old days count with new
+        cell.innerHTML = cell.innerHTML.replace(/\(\d+\)$/, '') + daysOldText;
     }
-});
 
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.role = 'alert';
+        alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+        
+        document.body.appendChild(alertDiv);
+        setTimeout(() => alertDiv.remove(), 5000); 
+    }
+
+    modalElement.addEventListener('hidden.bs.modal', function() {
+        payrollDateInput.value = '';
+        projectNumberInput.value = '';
+    });
+});

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const rows = document.querySelectorAll('#projectTableBody tr');
+    const rows = document.querySelectorAll('#projectTableBody #projectTableBodyMain');
 
     rows.forEach(row => {
         // Calculate days old for payroll date
