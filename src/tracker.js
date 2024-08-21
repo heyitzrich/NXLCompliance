@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const rows = document.querySelectorAll('#projectTableBody #projectTableBodyMain');
 
     rows.forEach(row => {
-        // Calculate days old for payroll date
         const payrollDateStr = row.dataset.payrolldate;
         const payrollDate = new Date(payrollDateStr);
         const payrollCell = row.querySelector('.payroll-days-old');

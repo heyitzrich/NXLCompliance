@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Initialize Tippy.js (Tooltips)
     tippy('[data-tippy-content]', {
         placement: 'right',
         animation: 'perspective',
@@ -70,23 +69,32 @@ document.addEventListener("DOMContentLoaded", function() {
     function filterTable(filterType, filterValue) {
         const rows = document.querySelectorAll(".table tbody tr");
         let found = false;
-        rows.forEach(row => {
-            const cells = row.getElementsByTagName("td");
-            const manager = cells.length > 4 ? cells[4].textContent.trim() : '';
-            const customer = cells.length > 5 ? cells[5].textContent.trim() : '';
+        const searchQuery = searchInput.value.trim().toLowerCase();
 
-            if ((filterType === 'manager' && (manager === filterValue || filterValue === ''))
-                || (filterType === 'customer' && (customer === filterValue || filterValue === ''))) {
+        rows.forEach(row => {
+            const managerCell = row.querySelector("#projectManagerList");
+            const customerCell = row.querySelector("#customerList");
+
+            const manager = managerCell ? managerCell.textContent.trim().toLowerCase() : '';
+            const customer = customerCell ? customerCell.textContent.trim().toLowerCase() : '';
+
+            const matchesFilter = (filterType === 'manager' && (manager === filterValue.toLowerCase() || filterValue === ''))
+                || (filterType === 'customer' && (customer === filterValue.toLowerCase() || filterValue === ''));
+
+            const matchesSearch = Array.from(row.getElementsByTagName("td")).some(cell => {
+                return cell.textContent.trim().toLowerCase().includes(searchQuery);
+            });
+
+            if ((matchesFilter || !filterType) && (matchesSearch || !searchQuery)) {
                 row.style.display = "";
                 found = true;
             } else {
                 row.style.display = "none";
             }
         });
-        if (!found) noResultsFound();
-    }
 
-    function noResultsFound() {
-        alert("No results found for the selected filter or search query.");
+        if (!found) {
+            console.log("No results found for the selected filter or search query.");
+        }
     }
 });
