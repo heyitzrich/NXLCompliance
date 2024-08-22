@@ -5,12 +5,15 @@ document.getElementById("searchInput").addEventListener("keyup", function() {
   table = document.querySelector(".table");
   
   if (!table) return;
-  tr = table.getElementsByTagName("tr");
+  var tbody = table.querySelector("tbody");
+  if (!tbody) return;
+
+  var tr = table.getElementsByTagName("tr");
 
   for (i = 0; i < tr.length; i++) {
-      if (tr[i].getElementsByTagName("th").length > 0) {
-          continue; 
-      }
+    if (tr[i].classList.contains('nested-row') || tr[i].closest('.collapse')) {
+        continue;
+    }
       var showRow = false; 
       td = tr[i].getElementsByTagName("td");
       for (j = 0; j < td.length; j++) {

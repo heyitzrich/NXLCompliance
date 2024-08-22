@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function filterTable(filterType, filterValue) {
-        const rows = document.querySelectorAll(".table tbody tr");
+        const rows = document.querySelectorAll(".table tbody tr:not(.nested-row)");
         let found = false;
         const searchQuery = searchInput.value.trim().toLowerCase();
 

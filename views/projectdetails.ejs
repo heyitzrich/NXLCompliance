@@ -122,17 +122,18 @@
         </div>
 
         <div class="row justify-content-md-center">
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
                 <label for="inputProjectTracking">Tracking</label>
                 <select class="form-control" id="inputProjectTracking" name="projectTracking">
                     <option value= "" selected>Select an Option</option>
                     <option value="DIR Only" <%= project.projecttracking === 'DIR Only' ? 'selected' : '' %>>DIR Only</option>
                     <option value="DIR & LCP" <%= project.projecttracking === 'DIR & LCP' ? 'selected' : '' %>>DIR & LCP</option>
+                    <option value="DIR & NXL Dropbox" <%= project.projecttracking === 'DIR & NXL Dropbox' ? 'selected' : '' %>>DIR & NXL Dropbox</option>
                     <option value="DIR, LCP, & NXL Dropbox" <%= project.projecttracking === 'DIR, LCP, & NXL Dropbox' ? 'selected' : '' %>>DIR, LCP, & NXL Dropbox</option>
                     <option value="NXL Dropbox Only" <%= project.projecttracking === 'NXL Dropbox Only' ? 'selected' : '' %>>NXL Dropbox Only</option>
                 </select>
             </div>
-            <div class="form-group col-md-3 mb-3">
+            <div class="form-group col-md-2 mb-3">
                 <label for="inputProjectPortal">LCP Portal</label>
                 <select class="form-control" id="inputProjectPortal" name="projectPortal">
                     <option value= "" selected>Select an Option</option>
@@ -156,6 +157,12 @@
                     <option value="Riverside Unified School District" <%= project.projectportal === 'Riverside Unified School District' ? 'selected' : '' %>>Riverside Unified School District</option>
                     <option value="Swinerton Builders" <%= project.projectportal === 'Swinerton Builders' ? 'selected' : '' %>>Swinerton Builders</option>
                     <option value="University of California Los Angeles" <%= project.projectportal === 'University of California Los Angeles' ? 'selected' : '' %>>University of California Los Angeles</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="inputProjectWageDet">Wage Determination</label>
+                <select class="form-control" id="inputProjectWageDet" name="projectWageDet">
+                    <option value="">Select an Option</option>
                 </select>
             </div>
         </div>
@@ -233,6 +240,38 @@
         }
     }
 
+    async function populateWageDetDropdown() {
+    try {
+        const response = await fetch('/api/wagedetermination');
+        if (!response.ok) throw new Error('Failed to fetch wage determination');
+        
+        const wageDetList = await response.json(); 
+        const selectElement = document.getElementById('inputProjectWageDet');
+        const savedDet = '<%= project.wagedetermination %>'; 
+
+        wageDetList.sort((a, b) => a.determination.localeCompare(b.determination));
+
+        let hasSavedDet = false;
+
+
+        wageDetList.forEach(determ => { 
+            const option = document.createElement('option');
+            option.value = determ.determination; 
+            option.textContent = determ.determination;
+            if (determ.determination === savedDet) {
+                    option.selected = true;
+                } selectElement.appendChild(option);
+        });
+
+        if (!hasSavedDet && (savedDet === null || savedDet === '')) {
+            selectElement.value = ''; 
+        }
+
+    } catch (error) {
+        console.error('Error populating wage determination dropdown:', error);
+    }
+}
+
     function adjustTextareaHeight(textarea) {
         textarea.style.height = 'auto'; 
         textarea.style.height = textarea.scrollHeight + 'px';
@@ -240,13 +279,12 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         populateCustomerDropdown(); 
+        populateWageDetDropdown();
         const textarea = document.getElementById('inputProjectNotes');
         adjustTextareaHeight(textarea); 
 
     
     });
-
-    
     </script>  
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>

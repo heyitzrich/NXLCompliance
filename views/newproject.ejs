@@ -129,17 +129,18 @@
           </div>
         </div>
         <div class="row justify-content-md-center">
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-2">
             <label for="inputProjectTracking">Tracking</label>
             <select class="form-control" id="inputProjectTracking" name="projectTracking">
               <option value="" selected>Select an Option</option>
               <option value="DIR Only">DIR Only</option>
               <option value="DIR & LCP">DIR & LCP</option>
+              <option value="DIR & NXL Dropbox"></option>
               <option value="DIR, LCP, & NXL Dropbox">DIR, LCP, & NXL Dropbox</option>
               <option value="NXL Dropbox Only">NXL Dropbox Only</option>
             </select>
           </div>
-          <div class="form-group col-md-3 mb-3">
+          <div class="form-group col-md-2 mb-3">
             <label for="inputProjectPortal">LCP Portal</label>
             <select class="form-control" id="inputProjectPortal" name="projectPortal">
               <option value="" selected>Select an Option</option>
@@ -165,6 +166,12 @@
               <option value="University of California Los Angeles">University of California Los Angeles</option>
             </select>
           </div>
+          <div class="form-group col-md-2">
+            <label for="inputProjectWageDet">Wage Determination</label>
+            <select class="form-control" id="inputProjectWageDet" name="projectWageDet">
+              <option value="">Select an Option</option>
+            </select>
+        </div>
         </div>
 
         <div class="row justify-content-center">
@@ -226,14 +233,36 @@
         }
       }
 
-  document.addEventListener('DOMContentLoaded', populateCustomerDropdown);  
+  async function populateWageDetDropdown() {
+    try {
+        const response = await fetch('/api/wagedetermination');
+        if (!response.ok) throw new Error('Failed to fetch wage determination');
+        
+        const wageDetList = await response.json(); 
+        const selectElement = document.getElementById('inputProjectWageDet')
+
+        wageDetList.forEach(determ => { 
+            const option = document.createElement('option');
+            option.value = determ.determination; 
+            option.textContent = determ.determination;
+            selectElement.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error('Error populating wage determination dropdown:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+        populateCustomerDropdown(); 
+        populateWageDetDropdown();
+});
   document.getElementById('myForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
 
-    // Client-side validation
     if (!data.projectNumber || !data.projectName || !data.projectAddress || !data.projectCity || !data.projectState ||
         !data.projectZip) {
         document.getElementById('errorMessage').textContent = 'All fields are required.';
@@ -249,18 +278,14 @@
             },
             body: JSON.stringify(data)
         });
-
         if (response.ok) {
-            // Handle successful submission
-            window.location.href = '/projects'; // Redirect on success
+            window.location.href = '/projects'; 
         } else {
-            // Handle error response
             const errorData = await response.json();
             document.getElementById('errorMessage').textContent = errorData.error;
             document.getElementById('errorMessage').style.display = 'block';
         }
     } catch (error) {
-        // Handle network or other errors
         document.getElementById('errorMessage').textContent = 'An unexpected error occurred. Please try again later.';
         document.getElementById('errorMessage').style.display = 'block';
     }

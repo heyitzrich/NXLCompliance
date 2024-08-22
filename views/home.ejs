@@ -53,7 +53,7 @@
     <div class="d-flex">
         <table class="table table-sm content table-auto table-hover" style="table-layout: auto; width: 100%">
             <thead class="table">
-                <tr>
+                <tr class="nested-row">
                     <th class="invisible">Sub</th>
                     <th>Project Number</th>
                     <th>DIR Number</th>
@@ -67,10 +67,18 @@
                 </tr>
             </thead>
             <tbody class="table-group-divider" id="projectTableBody">
+              <% 
+                const wageMap = {};
+                wageData.forEach(row => {
+                    if (!wageMap[row.projectnumber]) {
+                        wageMap[row.projectnumber] = row;
+                    }
+                });
+                %>
                 <% complianceData.forEach(function(complianceData) { %>
                   <tr id="projectTableBodyMain" data-dasfiledate="<%= complianceData.dasfiledate%>" data-dasonsitedate="<%= complianceData.dasonsitedate %>" data-actualonsitedate="<%= complianceData.actualonsitedate %>" data-payrolldate="<%= complianceData.payrolldate%>">
                     <td>
-                      <button type="button" class="btn btn-info btn-sm invisible" data-bs-toggle="collapse" data-bs-target="#collapseRow<%= complianceData.projectnumber %>">
+                      <button type="button" class="btn btn-dark btn-sm invisible" data-bs-toggle="collapse" data-bs-target="#<%= complianceData.projectnumber %>">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-chevron-expand" viewBox="0 0 16 16">
                           <path fill-rule="evenodd" d="M3.646 9.146a.5.5 0 0 1 .708 0L8 12.793l3.646-3.647a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708m0-2.292a.5.5 0 0 0 .708 0L8 3.207l3.646 3.647a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 0 0 0 .708"/>
                         </svg>
@@ -93,26 +101,49 @@
                     <td><%= complianceData.projecttracking %></td>
                     <td><%= complianceData.projectportal %></td>                       
                   </tr>
-                  <tr class="collapse" id="collapseRow<%= complianceData.projectnumber %>">
+                  <tr class="collapse nested-row" id="<%= complianceData.projectnumber %>">
                     <td colspan="10">
-                      <table style="table-layout: auto; width: 50%">
+                      <table class="table-sm table-bordered" style="table-layout: auto; width: 100%">
                         <thead>
-                          <tr>
-                            <th>Sub</th>
-                            <th>Payroll Date</th>
-                            <th>DAS</th>
-                            <th>FBS</th>
-                            <th>LCP Checklist</th>
-                            <th>Union Letter/TF Payment</th>
+                          <tr class="nested-row">
+                            <th>Determination</th>
+                            <th>Basic Hrly</th>
+                            <th>H&W</th>
+                            <th>Pension</th>
+                            <th>Vacation</th>
+                            <th>Training</th>
+                            <th>Other</th>
+                            <th>I1-BHR</th>
+                            <th>I1-H&W</th>
+                            <th>I1-Pension</th>
+                            <th>I2-BHR</th>
+                            <th>I2-H&W</th>
+                            <th>I2-Pension</th>
+                            <th>I3-BHR</th>
+                            <th>I3-H&W</th>
+                            <th>I3-Pension</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <td>Test</td>
-                          <td>Test</td>
-                          <td>Test</td>
-                          <td>Test</td>
-                          <td>Test</td>
-                          <td>Ipsum Lorem</td>
+                        <% const wage = wageMap[complianceData.projectnumber]; %>
+                        <tr class="nested-row">
+                          <td><%= complianceData.wagedetermination %></td>
+                          <td>$<%= wage ? wage.bhr : '-' %></td>
+                          <td>$<%= wage ? wage.haw : '-' %></td>
+                          <td>$<%= wage ? wage.pension : '-' %></td>
+                          <td>$<%= wage ? wage.vacation : '-' %></td>
+                          <td>$<%= wage ? wage.training : '-' %></td>
+                          <td>$<%= wage ? wage.other : '-' %></td>
+                          <td>$<%= wage ? wage.inc1BHR : '-' %></td>
+                          <td>$<%= wage ? wage.inc1HAW : '-' %></td>
+                          <td>$<%= wage ? wage.inc1PENSION : '-' %></td>
+                          <td>$<%= wage ? wage.inc2BHR : '-' %></td>
+                          <td>$<%= wage ? wage.inc2HAW : '-' %></td>
+                          <td>$<%= wage ? wage.inc2PENSION : '-' %></td>
+                          <td>$<%= wage ? wage.inc3BHR : '-' %></td>
+                          <td>$<%= wage ? wage.inc3HAW : '-' %></td>
+                          <td>$<%= wage ? wage.inc3PENSION : '-' %></td>
+                        </tr>
                         </tbody>
                       </table>
                     </td>

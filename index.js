@@ -58,7 +58,10 @@ app.get("/home", async (req, res) => {
       const complianceData = await db.query(
         "SELECT * FROM projects WHERE projectcprstatus = 'In Progress' ORDER BY projectnumber ASC",
       );
-      res.render("home", { complianceData: complianceData.rows });
+      const wageData = await db.query (
+        "SELECT projects.*, wagedetermination.* FROM projects JOIN wagedetermination ON projects.wagedetermination = wagedetermination.determination",
+      )
+      res.render("home", { complianceData: complianceData.rows, wageData: wageData.rows });
     } catch (err) {
       console.error("Error fetching projects:", err);
       res.status(500).send("Internal Server Error");
@@ -119,6 +122,17 @@ app.get("/api/customers", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+app.get("/api/wagedetermination", async (req, res) => {
+  try {
+    const result = await db.query("SELECT determination FROM wagedetermination");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching wage determination:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 
 //Render NewProject Page
 app.get("/newproject", (req, res) => {
@@ -274,6 +288,7 @@ app.post("/projects/:projectnumber", async (req, res) => {
       projectNotes,
       projectCustomer,
       projectCPRStatus,
+      projectWageDet,
     } = req.body;
     const dasFileDate = req.body.dasFileDate
     ? moment(req.body.dasFileDate).format("YYYY-MM-DD")
@@ -290,7 +305,7 @@ app.post("/projects/:projectnumber", async (req, res) => {
 
     try {
       await db.query(
-        "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11, projectcustomer = $12, dasfiledate = $13, dasonsitedate = $14, actualonsitedate = $15, projectcprstatus = $16, payrolldate = $17 WHERE projectnumber = $18",
+        "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11, projectcustomer = $12, dasfiledate = $13, dasonsitedate = $14, actualonsitedate = $15, projectcprstatus = $16, payrolldate = $17, wagedetermination = $18 WHERE projectnumber = $19",
         [
           dirNumber,
           projectManager,
@@ -309,6 +324,7 @@ app.post("/projects/:projectnumber", async (req, res) => {
           actualOnsiteDate,
           projectCPRStatus,
           payrollDate,
+          projectWageDet,
           projectNumber,
         ],
       );
@@ -519,6 +535,7 @@ app.post("/newproject", async (req, res) => {
   const projectTracking = req.body.projectTracking;
   const projectPortal = req.body.projectPortal;
   const projectNotes = req.body.projectNotes;
+  const projectWageDet = req.body.projectWageDet;
   const dasFileDate = req.body.dasFileDate
     ? moment(req.body.dasFileDate).format("YYYY-MM-DD")
     : null;
@@ -533,7 +550,7 @@ app.post("/newproject", async (req, res) => {
 
   try {
     await db.query(
-      "INSERT INTO projects (projectnumber, dirnumber, projectmanager, projectcontract, projectname, projectaddress, projectcity, projectstate, projectzip, projecttracking, projectportal, projectnotes, dasfiledate, dasonsitedate, actualonsitedate, projectcustomer, projectcprstatus) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)",
+      "INSERT INTO projects (projectnumber, dirnumber, projectmanager, projectcontract, projectname, projectaddress, projectcity, projectstate, projectzip, projecttracking, projectportal, projectnotes, dasfiledate, dasonsitedate, actualonsitedate, projectcustomer, projectcprstatus, wagedetermination) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)",
       [
         projectNumber,
         dirNumber,
@@ -552,6 +569,7 @@ app.post("/newproject", async (req, res) => {
         actualOnsiteDate,
         projectCustomer,
         projectCPRStatus,
+        projectWageDet,
       ],
     );
     res.redirect("/projects");
