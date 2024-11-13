@@ -153,7 +153,7 @@ app.get("/api/sub", async (req, res) => {
 
 app.get("/api/wagedetermination", async (req, res) => {
   try {
-    const result = await db.query("SELECT determination FROM wagedetermination ASC");
+    const result = await db.query("SELECT determination FROM wagedetermination ORDER BY determination ASC");
     res.json(result.rows);
   } catch (err) {
     console.error("Error fetching wage determination:", err);
