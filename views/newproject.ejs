@@ -33,10 +33,16 @@
           </div>
         </div>
         <div class="row justify-content-md-center">
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-3">
             <label for="inputProjectCustomer">Customer</label>
             <select class="form-control" id="inputProjectCustomer" name="projectCustomer" required>
               <option value="" selected>Select a Customer</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="inputProjectSubcontractor">Assign Sub</label>
+            <select class="form-control" id="inputProjectSubcontractor" name="projectSubcontractor">
+              <option value="" selected>Assign a Sub</option>
             </select>
           </div>
         </div>
@@ -152,6 +158,7 @@
               <option value="DPR Construction">DPR Construction</option>
               <option value="Engie Services">Engie Services</option>
               <option value="Erickson-Hall Construction">Erickson-Hall Construction</option>
+              <option value="KYA Services LLC">KYA Services LLC</option>
               <option value="Los Angeles Community College District">Los Angeles Community College District</option>
               <option value="Los Angeles County">Los Angeles County</option>
               <option value="Los Angeles County Joint">Los Angeles County Joint</option>
@@ -216,22 +223,40 @@
 
 <script>
   async function populateCustomerDropdown() {
-        try {
-          const response = await fetch('/api/customers');
-          if (!response.ok) throw new Error('Failed to fetch customers');
-          const customers = await response.json();
-          
-          const selectElement = document.getElementById('inputProjectCustomer');
-          customers.forEach(customer => {
-            const option = document.createElement('option');
-            option.value = customer.customername; 
-            option.textContent = customer.customername;
-            selectElement.appendChild(option);
-          });
-        } catch (error) {
-          console.error('Error populating customer dropdown:', error);
-        }
-      }
+    try {
+      const response = await fetch('/api/customers');
+      if (!response.ok) throw new Error('Failed to fetch customers');
+      const customers = await response.json();
+      
+      const selectElement = document.getElementById('inputProjectCustomer');
+      customers.forEach(customer => {
+        const option = document.createElement('option');
+        option.value = customer.customername; 
+        option.textContent = customer.customername;
+        selectElement.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error populating customer dropdown:', error);
+    }
+ }
+
+  async function populateSubDropdown() {
+    try {
+      const response = await fetch('/api/sub');
+      if (!response.ok) throw new Error('Failed to fetch subs');
+      const subcontractors = await response.json();
+      
+      const selectElement = document.getElementById('inputProjectSubcontractor');
+      subcontractors.forEach(sub => {
+        const option = document.createElement('option');
+        option.value = sub.subname; 
+        option.textContent = sub.subname;
+        selectElement.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error populating sub dropdown:', error);
+    }
+ }
 
   async function populateWageDetDropdown() {
     try {
@@ -256,6 +281,7 @@
 document.addEventListener('DOMContentLoaded', function() {
         populateCustomerDropdown(); 
         populateWageDetDropdown();
+        populateSubDropdown();
 });
   document.getElementById('myForm').addEventListener('submit', async function(event) {
     event.preventDefault();
