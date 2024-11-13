@@ -71,6 +71,24 @@ app.get("/home", async (req, res) => {
   }
 });
 
+//Render Sub Compliance Page 
+app.get("/subcompliance", async (req, res) => {
+  if (req.isAuthenticated()) {
+    try {
+      const subComplianceData = await db.query(
+        "SELECT * FROM projects WHERE projectcprstatus IN ('In Progress', 'Open') AND subcontractor IS NOT NULL AND subcontractor <> '' ORDER BY projectnumber ASC",
+      );
+      res.render("subcompliance", { subComplianceData: subComplianceData.rows});
+    } catch (err) {
+      console.error("Error fetching projects:", err);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.redirect("/");
+  }
+});
+
+
 //Render Customer Portal Page & Pull Data from DB to Display
 app.get("/customer", async (req, res) => {
   if (req.isAuthenticated()) {
@@ -123,9 +141,19 @@ app.get("/api/customers", async (req, res) => {
   }
 });
 
+app.get("/api/sub", async (req, res) => {
+  try {
+    const result = await db.query("SELECT subname FROM subcontractors ORDER BY subname ASC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching customers:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 app.get("/api/wagedetermination", async (req, res) => {
   try {
-    const result = await db.query("SELECT determination FROM wagedetermination");
+    const result = await db.query("SELECT determination FROM wagedetermination ASC");
     res.json(result.rows);
   } catch (err) {
     console.error("Error fetching wage determination:", err);
@@ -199,6 +227,20 @@ app.get("/projects/:projectnumber", async (req, res) => {
     res.redirect("/");
   }
 });
+
+//subcompliance details
+app.get("/projects/:projectnumber/:subcontractor", (req, res) => {
+  if (req.isAuthenticated()) {
+    const projectNumber = req.params.projectnumber; 
+    const subcontractorName = req.params.subcontractor; 
+
+    res.render("subcompliancedetails", { projectNumber, subcontractorName });
+  } else {
+    res.redirect("/");
+  }
+});
+
+
 
 //Customer Details Page
 app.get("/customer/:customername", async (req, res) => {
@@ -289,6 +331,7 @@ app.post("/projects/:projectnumber", async (req, res) => {
       projectCustomer,
       projectCPRStatus,
       projectWageDet,
+      projectSubcontractor,
     } = req.body;
     const dasFileDate = req.body.dasFileDate
     ? moment(req.body.dasFileDate).format("YYYY-MM-DD")
@@ -305,7 +348,7 @@ app.post("/projects/:projectnumber", async (req, res) => {
 
     try {
       await db.query(
-        "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11, projectcustomer = $12, dasfiledate = $13, dasonsitedate = $14, actualonsitedate = $15, projectcprstatus = $16, payrolldate = $17, wagedetermination = $18 WHERE projectnumber = $19",
+        "UPDATE projects SET dirnumber = $1, projectmanager = $2, projectcontract = $3, projectname = $4, projectaddress = $5, projectcity = $6, projectstate = $7, projectzip = $8, projecttracking = $9, projectportal = $10, projectnotes = $11, projectcustomer = $12, dasfiledate = $13, dasonsitedate = $14, actualonsitedate = $15, projectcprstatus = $16, payrolldate = $17, wagedetermination = $18, subcontractor = $19 WHERE projectnumber = $20",
         [
           dirNumber,
           projectManager,
@@ -325,6 +368,7 @@ app.post("/projects/:projectnumber", async (req, res) => {
           projectCPRStatus,
           payrollDate,
           projectWageDet,
+          projectSubcontractor,
           projectNumber,
         ],
       );
