@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             payrollCell.innerHTML += ` (${daysOld})`;
 
-            if (daysOld > 7) {
+            if (daysOld > 10) {
                 payrollCell.classList.add('text-danger');
             } else {
                 payrollCell.classList.add('text-success');
