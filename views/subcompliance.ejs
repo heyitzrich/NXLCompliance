@@ -68,13 +68,14 @@
                   <td><%= project.projectname %></td>
                   <td><a href="/projects/<%= project.projectnumber %>/<%= project.subcontractor %>"><%= project.subcontractor %></a></td>
                   <td class="start-of-work">
+                    <!-- eslint-disable -->
                     <div class="progress" style="height: 30px">
                       <div class="progress-bar bg-success" 
-                           role="progressbar" 
-                           style="width: <%= calculateStartOfWorkProgress(project.subdas, project.subfbs, project.subcl) %>%" 
-                           aria-valuenow="<%= calculateStartOfWorkProgress(project.subdas, project.subfbs, project.subcl) %>" 
-                           aria-valuemin="0" 
-                           aria-valuemax="100">
+                          role="progressbar" 
+                          style="width: <%= calculateStartOfWorkProgress(project.subdas, project.subfbs, project.subcl) %>%" 
+                          aria-valuenow="<%= calculateStartOfWorkProgress(project.subdas, project.subfbs, project.subcl) %>" 
+                          aria-valuemin="0" 
+                          aria-valuemax="100">
                         <%= calculateStartOfWorkProgress(project.subdas, project.subfbs, project.subcl) %>%
                       </div>
                     </div>

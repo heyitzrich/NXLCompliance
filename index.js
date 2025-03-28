@@ -259,7 +259,6 @@ app.get("/projects/:projectnumber", async (req, res) => {
       if (!project) {
         return res.status(404).send("Project not found");
       }
-
       res.render("projectdetails", { project });
     } catch (err) {
       console.error("Error fetching project details:", err);

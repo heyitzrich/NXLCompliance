@@ -226,28 +226,37 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
     async function populateCustomerDropdown() {
-        try {
-            const response = await fetch('/api/customers');
-            if (!response.ok) throw new Error('Failed to fetch customers');
-            const customers = await response.json();
+    try {
+        const response = await fetch('/api/customers');
+        if (!response.ok) throw new Error('Failed to fetch customers');
+        const customers = await response.json();
 
-            const selectElement = document.getElementById('inputProjectCustomer');
-            const savedCustomer = '<%= project.projectcustomer %>'; 
+        const selectElement = document.getElementById('inputProjectCustomer');
+        const savedCustomer = '<%= project.projectcustomer %>';
+        
+        // Create a temporary element to decode HTML entities
+        const tempElement = document.createElement('textarea');
+        tempElement.innerHTML = savedCustomer;
+        const decodedCustomer = tempElement.value;
+        
+        // Clear existing options
+        selectElement.innerHTML = '';
 
-            customers.forEach(customer => {
-                const option = document.createElement('option');
-                option.value = customer.customername;
-                option.textContent = customer.customername;
-                if (customer.customername === savedCustomer) {
-                    option.selected = true;
-                }
-                selectElement.appendChild(option);
-            });
+        customers.forEach(customer => {
+            const option = document.createElement('option');
+            option.value = customer.customername;
+            option.textContent = customer.customername;
+            
+            if (customer.customername === decodedCustomer) {
+                option.selected = true;
+            }
+            selectElement.appendChild(option);
+        });
 
-        } catch (error) {
-            console.error('Error populating customer dropdown:', error);
-        }
+    } catch (error) {
+        console.error('Error populating customer dropdown:', error);
     }
+}
 
     async function populateSubDropdown() {
         try {
@@ -257,6 +266,7 @@
 
             const selectElement = document.getElementById('inputProjectSubcontractor');
             const savedSubcontractor = '<%= project.subcontractor %>'; 
+            console.log(savedSubcontractor);
 
             subcontractors.forEach(sub => {
                 const option = document.createElement('option');
