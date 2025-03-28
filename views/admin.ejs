@@ -3,60 +3,179 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NXL Login</title>
-  
+  <title>NXL Admin Portal</title>
   <link href="/styles/sign-in.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 </head>
 
 <body class="d-flex align-items-center py-4 bg-body-tertiary">
-  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
-    <symbol id="check2" viewBox="0 0 16 16">
-      <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"></path>
-    </symbol>
-    <symbol id="circle-half" viewBox="0 0 16 16">
-      <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"></path>
-    </symbol>
-    <symbol id="moon-stars-fill" viewBox="0 0 16 16">
-      <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"></path>
-      <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"></path>
-    </symbol>
-    <symbol id="sun-fill" viewBox="0 0 16 16">
-      <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
-    </symbol>
-  </svg>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10 col-lg-8">
+        <div class="text-center mb-5">
+          <img class="mb-4 rounded" src="/assets/nxl.png" width="72" height="57">
+          <h1 class="h3 mb-3 fw-normal">Admin Portal</h1>
+          <p class="text-muted">Manage system users and access</p>
+        </div>
 
-  
-<main class="form-signin w-100 m-auto">
-<form action="/admin" method="POST">
-  <div class="text-center">
-  <img class="mb-4 rounded" src="/assets/nxl.png" width="72" height="57">
-  <h1 class="h3 mb-3 fw-normal">Register New Users</h1>
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-dark">
+            <h5 class="card-title mb-0">Add New User</h5>
+          </div>
+          <div class="card-body">
+            <form action="/admin" method="POST">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="username" required>
+                    <label for="floatingInput">Email address</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password" required>
+                    <label for="floatingPassword">Password</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <button class="btn btn-primary w-100 py-2" type="submit">Create User</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card shadow-sm">
+          <div class="card-header bg-dark d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">User Management</h5>
+            <span class="badge bg-secondary"><%= users ? users.length : 0 %> users</span>
+          </div>
+          <div class="card-body">
+            <% if (users && users.length > 0) { %>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Email</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% users.forEach((user, index) => { %>
+                      <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= user.email %></td>
+                        <td>
+                          <div class="btn-group btn-group-sm" role="group">
+                            <button class="btn btn-outline-warning" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#resetModal" 
+                                    data-user-id="<%= user.id %>"
+                                    data-user-email="<%= user.email %>">
+                              <i class="bi bi-key"></i> Reset
+                            </button>
+                            <button class="btn btn-outline-danger" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal" 
+                                    data-user-id="<%= user.id %>"
+                                    data-user-email="<%= user.email %>">
+                              <i class="bi bi-trash"></i> Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            <% } else { %>
+              <div class="alert alert-info mb-0">No users found</div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="form-floating">
-    <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="username">
-    <label for="floatingInput">Email address</label>
-  </div>
-  <div class="form-floating">
-    <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
-    <label for="floatingPassword">Password</label>
+  <!-- Reset Password Modal -->
+  <div class="modal fade" id="resetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Reset Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Reset password for <strong id="resetEmail"></strong>?</p>
+          <form id="resetForm" method="POST" action="/admin/reset-password">
+            <input type="hidden" name="userId" id="resetUserId">
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">New Password</label>
+              <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" form="resetForm" class="btn btn-primary">Reset Password</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="form-check text-start my-3">
-    <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
-    <label class="form-check-label" for="flexCheckDefault">
-      Remember me
-    </label>
+  <!-- Delete User Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete <strong id="deleteEmail"></strong>?</p>
+          <p class="text-danger">This action cannot be undone.</p>
+          <form id="deleteForm" method="POST" action="/admin/delete-user">
+            <input type="hidden" name="userId" id="deleteUserId">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" form="deleteForm" class="btn btn-danger">Delete User</button>
+        </div>
+      </div>
+    </div>
   </div>
-  <button class="btn btn-primary w-100 py-2" type="submit">Register</button>
-  <p class="mt-5 mb-3 text-body-secondary">© 2024</p>
-</form>
-</main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const resetModal = document.getElementById('resetModal');
+    const deleteModal = document.getElementById('deleteModal');
+    
+    if (resetModal) {
+      resetModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const userId = button.getAttribute('data-user-id');
+        const userEmail = button.getAttribute('data-user-email');
+        
+        document.getElementById('resetUserId').value = userId;
+        document.getElementById('resetEmail').textContent = userEmail;
+      });
+    }
+    
+    if (deleteModal) {
+      deleteModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const userId = button.getAttribute('data-user-id');
+        const userEmail = button.getAttribute('data-user-email');
+        
+        document.getElementById('deleteUserId').value = userId;
+        document.getElementById('deleteEmail').textContent = userEmail;
+      });
+    }
+  });
+  </script>
 </body>
 </html>
-

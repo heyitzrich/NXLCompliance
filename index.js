@@ -148,11 +148,25 @@ app.get("/customer", async (req, res) => {
 });
 
 //Render Admin Page
-app.get("/admin", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.render("admin");
-  } else {
-    res.redirect("/");
+app.get("/admin", async (req, res) => {
+  if (!req.isAuthenticated()) return res.redirect("/");
+
+  try {
+    const result = await db.query("SELECT id, email FROM users ORDER BY id");
+    return res.render("admin", {
+      users: result.rows
+    });
+  } catch (err) {
+    console.error("Admin error:", err);
+    return res.status(500).send(`
+      <div class="container mt-5">
+        <div class="alert alert-danger">
+          <h2>Database Error</h2>
+          <p>${process.env.NODE_ENV === "development" ? err.message : 'Please try again later'}</p>
+        </div>
+        <a href="/admin" class="btn btn-primary">Back to Admin</a>
+      </div>
+    `);
   }
 });
 
@@ -343,6 +357,46 @@ app.get("/subcontractor/:subname", async (req, res) => {
     }
   } else {
     res.redirect("/");
+  }
+});
+// Handle password reset
+app.post("/admin/reset-password", async (req, res) => {
+  if (!req.isAuthenticated()) return res.redirect("/");
+
+  const { userId, newPassword } = req.body;
+  
+  try {
+    const hash = await bcrypt.hash(newPassword, saltRounds);
+    await db.query("UPDATE users SET password = $1 WHERE id = $2", [hash, userId]);
+    return res.redirect("/admin?reset=success");
+  } catch (err) {
+    console.error("Password reset failed:", err);
+    return res.status(500).send(`
+      <div class="alert alert-danger">
+        <h2>Password Reset Failed</h2>
+        <p>${err.message}</p>
+      </div>
+    `);
+  }
+});
+
+// Handle user deletion
+app.post("/admin/delete-user", async (req, res) => {
+  if (!req.isAuthenticated()) return res.redirect("/");
+
+  const { userId } = req.body;
+  
+  try {
+    await db.query("DELETE FROM users WHERE id = $1", [userId]);
+    return res.redirect("/admin?delete=success");
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    return res.status(500).send(`
+      <div class="alert alert-danger">
+        <h2>Delete Failed</h2>
+        <p>${err.message}</p>
+      </div>
+    `);
   }
 });
 
@@ -578,41 +632,32 @@ app.post(
   }),
 );
 
-//Passing Data from Admin Page to Create New User Info
+// Create new user
 app.post("/admin", async (req, res) => {
-  const email = req.body.username;
-  const password = req.body.password;
+  if (!req.isAuthenticated()) return res.redirect("/");
 
+  const { username: email, password } = req.body;
+  
   try {
-    const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
-    //Password Hashing
+    // Check if user exists
+    const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [email]);
     if (checkResult.rows.length > 0) {
-      res.send("Email already exists. Try logging in.");
-    } else {
-      bcrypt.hash(password, saltRounds, async (err, hash) => {
-        if (err) {
-          console.log("Error hashing password:", err);
-        } else {
-          const result = await db.query(
-            "INSERT INTO users (email, password) VALUES ($1, $2)",
-            [email, hash],
-          );
-          try {
-            const complianceData = await db.query(
-              "SELECT * FROM projects WHERE projectcprstatus = 'In Progress' ORDER BY projectnumber ASC",
-            );
-            res.render("home", { complianceData: complianceData.rows });
-          } catch (err) {
-            console.error("Error feting projects:", err);
-            res.status(500).send("Internal Server Error");
-          }
-        }
-      });
+      return res.status(400).send("Email already exists. Try logging in.");
     }
+
+    // Hash password and create user
+    const hash = await bcrypt.hash(password, saltRounds);
+    await db.query("INSERT INTO users (email, password) VALUES ($1, $2)", [email, hash]);
+    
+    return res.redirect("/admin");
   } catch (err) {
-    console.log(err);
+    console.error("Error creating user:", err);
+    return res.status(500).send(`
+      <div class="alert alert-danger">
+        <h2>Error Creating User</h2>
+        <p>${err.message}</p>
+      </div>
+    `);
   }
 });
 
