@@ -76,11 +76,54 @@ app.get("/subcompliance", async (req, res) => {
   if (req.isAuthenticated()) {
     try {
       const subComplianceData = await db.query(
-        "SELECT * FROM projects WHERE projectcprstatus IN ('In Progress', 'Open') AND subcontractor IS NOT NULL AND subcontractor <> '' ORDER BY projectnumber ASC",
+        `SELECT 
+          projectnumber,
+          dirnumber,
+          projectname,
+          subcontractor,
+          subpayroll,
+          subdas,
+          subfbs,
+          subcl,
+          projecttracking,
+          projectportal,
+          projectnotes
+         FROM projects 
+         WHERE projectcprstatus IN ('In Progress', 'Open') 
+         AND subcontractor IS NOT NULL 
+         AND subcontractor <> '' 
+         ORDER BY projectnumber ASC`
       );
-      res.render("subcompliance", { subComplianceData: subComplianceData.rows});
+
+      // Calculate progress percentage (0-100) based on 3 compliance items
+      const calculateStartOfWorkProgress = (subdas, subfbs, subcl) => {
+        let completed = 0;
+        if (subdas) completed++;
+        if (subfbs) completed++;
+        if (subcl) completed++;
+        return Math.round((completed / 3) * 100);
+      };
+
+      // Format date as MM/DD/YYYY (UTC)
+      const formatDateDisplay = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString + 'T00:00:00Z');
+        return date.toLocaleDateString('en-US', {
+          timeZone: 'UTC',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        });
+      };
+
+      res.render("subcompliance", {
+        subComplianceData: subComplianceData.rows,
+        calculateStartOfWorkProgress,
+        formatDateDisplay
+      });
+
     } catch (err) {
-      console.error("Error fetching projects:", err);
+      console.error("Error fetching subcompliance data:", err);
       res.status(500).send("Internal Server Error");
     }
   } else {
@@ -186,7 +229,6 @@ app.get("/subcontractor", async (req, res) => {
   }
 });
 
-//Render Projects and Fetch Projects from DB
 app.get("/projects", async (req, res) => {
   if (req.isAuthenticated()) {
     try {
@@ -229,12 +271,25 @@ app.get("/projects/:projectnumber", async (req, res) => {
 });
 
 //subcompliance details
-app.get("/projects/:projectnumber/:subcontractor", (req, res) => {
+app.get("/projects/:projectnumber/:subcontractor", async (req, res) => {
   if (req.isAuthenticated()) {
     const projectNumber = req.params.projectnumber; 
     const subcontractorName = req.params.subcontractor; 
+    try {
+      const projectResult = await db.query(
+        "SELECT * FROM projects WHERE projectnumber = $1",
+        [projectNumber],
+      );
+      const project = projectResult.rows[0];
 
-    res.render("subcompliancedetails", { projectNumber, subcontractorName });
+      if (!project) {
+        return res.status(404).send("Project not found");
+      }
+      res.render("subcompliancedetails", { project, projectNumber,});
+    } catch (err) {
+      console.error("Error fetching project details:", err);
+      res.status(500).send("Internal Server Error");
+    }
   } else {
     res.redirect("/");
   }
@@ -309,6 +364,63 @@ app.post("/update-payroll-date", async (req, res) => {
     }
   } else {
     res.redirect("/");
+  }
+});
+
+//Handle Sub Payroll Updates
+app.post('/update-subpayroll-date', async (req, res) => {
+  if (req.isAuthenticated()) {
+      const { projectNumber, newDate } = req.body;
+
+      try {
+          await db.query(
+              "UPDATE projects SET subpayroll = $1 WHERE projectnumber = $2",
+              [newDate, projectNumber]
+          );
+          res.status(200).send('Subpayroll date updated successfully');
+      } catch (err) {
+          console.error("Error updating subpayroll date:", err);
+          res.status(500).send("Failed to update subpayroll date");
+      }
+  } else {
+      res.redirect("/subcompliance");
+  }
+});
+
+//Handle Sub Project Update
+app.post("/projects/:projectnumber/:subcontractor", async (req, res) => {
+  if (req.isAuthenticated()) {
+    const projectNumber = req.params.projectnumber;
+    const {
+      subDAS,
+      subFBS,                               
+      subCL,
+    } = req.body;
+    const subPayroll = req.body.subPayroll
+    ? moment(req.body.subPayroll).format("YYYY-MM-DD")
+    : null;
+
+    const subDASBool = subDAS === 'true';
+    const subFBSBool = subFBS === 'true';
+    const subCLBool = subCL === 'true';
+    try {
+      await db.query(
+        "UPDATE projects SET subdas = $1, subfbs = $2, subcl = $3, subpayroll = $4 WHERE projectnumber = $5",
+        [
+          subDASBool,
+          subFBSBool,
+          subCLBool,
+          subPayroll,
+          projectNumber,
+        ],
+      );
+      res.redirect(`/subcompliance`);
+    } catch (err) {
+      console.error("Error updating project:", err);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.redirect("/subcompliance");
   }
 });
 

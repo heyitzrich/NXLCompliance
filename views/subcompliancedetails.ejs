@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1 class="content text-center">Compliance Details</h1> <br><br>
-    
+  <form action="/projects/<%= project.projectnumber %>/<%= project.subcontractor%>" method="post" id="myForm">
     <div class="accordion content">
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingOne">
@@ -21,16 +21,16 @@
             <div class="accordion-body">
               <strong>
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                    <label class="form-check-label" for="flexSwitchCheckDefault">DAS 140/142 Submissions</label>
+                  <input class="form-check-input" type="checkbox" id="inputSubDAS" name="subDAS" value="true" <%= project.subdas ? 'checked' : '' %> />
+                  <label class="form-check-label" for="inputSubDAS">DAS 140/142 Submissions</label>
                 </div>
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                    <label class="form-check-label" for="flexSwitchCheckDefault">Fringe Benefits Statement</label>
+                  <input class="form-check-input" type="checkbox" id="inputSubFBS" name="subFBS" value="true" <%= project.subfbs ? 'checked' : '' %> />
+                  <label class="form-check-label" for="inputSubFBS">Fringe Benefits Statement</label>
                 </div>
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                    <label class="form-check-label" for="flexSwitchCheckDefault">Labor Law Checklist</label>
+                  <input class="form-check-input" type="checkbox" id="inputSubCL" name="subCL" value="true" <%= project.subcl ? 'checked' : '' %> />
+                  <label class="form-check-label" for="inputSubCL">Labor Law Checklist</label>
                 </div>
               </strong>
             </div>
@@ -46,8 +46,8 @@
             <div class="accordion-body">
               <strong>
                 <div class="form-check col-md-2">
-                    <label for="inputPayrollDate">Current CPR Date</label>
-                    <input type ="date" id="subCPRDate" class="form-control" name="payrollDate">
+                    <label for="inputSubPayroll">Current CPR Date</label>
+                    <input type="date" id="inputSubPayroll" class="form-control" name="subPayroll" value="<%= project.subpayroll ? new Date(project.subpayroll).toISOString().split('T')[0] : '' %>">
                 </div>
               </strong> 
             </div>
@@ -121,6 +121,7 @@
                 <button type="submit" class="btn btn-primary mb-4">Update</button>
             </div>
         </div>
+      </form>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 </body>

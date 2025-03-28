@@ -90,13 +90,21 @@
                           .replace(/\n/g, '</p><p>')
                           .replace(/^/, '<p>')
                           .replace(/$/, '</p>') : '<p>No notes available.</p>' %>
-                      </div>"><a href="/projects/<%= complianceData.projectnumber %>"><%= complianceData.projectnumber %></a>
-                    </td>
+                  </div>">
+                      <a href="/projects/<%= complianceData.projectnumber %>"><%= complianceData.projectnumber %></a>
+                  </td>
                     <td><%= complianceData.dirnumber %></td>
                     <td><%= complianceData.projectname %></td>
                     <td id="projectManagerList"><%= complianceData.projectmanager %></td>
                     <td id="customerList"><%= complianceData.projectcustomer %></td>  
-                    <td class="payroll-date payroll-days-old" data-bs-toggle="modal" data-bs-target="#editPayrollDateModal" data-project-number="<%= complianceData.projectnumber %>" data-payroll-date="<%= complianceData.payrolldate %>"><%= complianceData.payrolldate %></td>
+                    <td class="payroll-date payroll-days-old" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#editPayrollDateModal" 
+                        data-project-number="<%= complianceData.projectnumber %>" 
+                        data-payroll-date="<%= complianceData.payrolldate %>">
+                      <%= complianceData.payrolldate ? new Date(complianceData.payrolldate).toLocaleDateString() : '' %>
+                    </td>
+                    </td>
                     <td id="dasStatus"></td>
                     <td><%= complianceData.projecttracking %></td>
                     <td><%= complianceData.projectportal %></td>                       

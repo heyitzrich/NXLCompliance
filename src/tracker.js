@@ -3,24 +3,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
     rows.forEach(row => {
         const payrollDateStr = row.dataset.payrolldate;
-        const payrollDate = new Date(payrollDateStr);
         const payrollCell = row.querySelector('.payroll-days-old');
-
-        if (!isNaN(payrollDate.getTime())) {
+        
+        if (payrollDateStr) {
+            // Parse date without timezone issues
+            const [year, month, day] = payrollDateStr.split('-');
+            const payrollDate = new Date(year, month - 1, day);
+            const formattedDate = `${month}/${day}/${year}`;
+            
+            // Update cell text with properly formatted date
+            payrollCell.textContent = formattedDate;
+            
+            // Calculate days old (timezone-safe)
             const today = new Date();
+            today.setHours(0, 0, 0, 0); 
             const timeDiff = today - payrollDate;
             const daysOld = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-
+            
             payrollCell.innerHTML += ` (${daysOld})`;
-
-            if (daysOld > 10) {
+            
+            if (daysOld > 15) {
                 payrollCell.classList.add('text-danger');
+                payrollCell.classList.remove('text-success');
             } else {
                 payrollCell.classList.add('text-success');
+                payrollCell.classList.remove('text-danger');
             }
         }
-
-        // Determine and set the icon for DAS status
         const dasonsiteDateStr = row.dataset.dasonsitedate;
         const actualonsiteDateStr = row.dataset.actualonsitedate;
         const dasfileDateStr = row.dataset.dasfiledate;
@@ -37,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <path d="${iconPath}"/>
                 </svg>`;
         };
+        
         if (dasfileDate) {
             if (dasonsiteDate && actualonsiteDate) {
                 if (dasonsiteDate.getTime() === actualonsiteDate.getTime()) {
