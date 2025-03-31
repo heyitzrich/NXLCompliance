@@ -6,12 +6,28 @@
     <title>Sub Compliance</title>
     <%- include("sidebar2.ejs") %>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        .text-danger {
-            color:red;
+        .content {
+            padding: 20px;
         }
-        .text-success {
-            color:green;
+        .progress {
+            min-width: 100px;
+        }
+        .subpayroll-date {
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .subpayroll-date:hover {
+            background-color: rgba(13, 110, 253, 0.1);
+        }
+        .days-old-badge {
+            font-size: 0.75rem;
+            margin-left: 0.25rem;
+        }
+        .table-sm {
+            font-size: 0.875rem;
         }
     </style>
 </head>
@@ -30,7 +46,10 @@
                         <input type="date" class="form-control" id="subPayrollDateInput" required>
                         <input type="hidden" id="projectNumberInput">
                     </div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -38,13 +57,19 @@
 </div>
     <h1 class="content text-center">Sub Compliance Tracker</h1>
     <div class="d-flex mb-3">
-        <input type="text" id="searchInput" class="form-control search-bar content" placeholder="Search by Project Number, DIR or Project Name" style="width:100%">
+        <div class="input-group content">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by Project Number, DIR or Project Name">
+            <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
     </div>
     <div class="d-flex">
-        <table class="table table-sm content table-auto table-hover" style="table-layout: auto; width: 100%">
-            <thead class="table">
-                <tr class="nested-row">
-                    <th class="invisible">Sub</th>
+        <table class="table table-sm content table-hover" style="table-layout: auto; width: 100%">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 30px;"></th>
                     <th>Project Number</th>
                     <th>DIR Number</th>
                     <th>Project Name</th>
@@ -58,17 +83,20 @@
             </thead>
             <tbody class="table-group-divider" id="projectTableBody">
               <% subComplianceData.forEach(project => { %>
-                <tr id="projectTableBodyMain">
-                  <td>
+                <tr>
+                  <td style="visibility:hidden">
+                    <button class="btn btn-sm btn-outline-secondary p-1" data-bs-toggle="collapse" data-bs-target="#details-<%= project.projectnumber %>">
+                      <i class="bi bi-chevron-down"></i>
+                    </button>
                   </td>
-                  <td data-tippy-content="<div><p><strong>Project Notes:</strong></p></div>">
+                  <td data-tippy-content="<div><p><strong>Project Notes:</strong></p><p><%= project.projectnotes || 'No notes available' %></p></div>">
                     <a href="/projects/<%= project.projectnumber %>"><%= project.projectnumber %></a>
                   </td>
                   <td><%= project.dirnumber %></td>
                   <td><%= project.projectname %></td>
                   <td><a href="/projects/<%= project.projectnumber %>/<%= project.subcontractor %>"><%= project.subcontractor %></a></td>
                   <td class="start-of-work">
-                    <div class="progress" style="height: 30px">
+                    <div class="progress" style="height: 25px">
                       <div class="progress-bar bg-success" 
                           role="progressbar" 
                           style="width: <%= calculateStartOfWorkProgress(project.subdas, project.subfbs, project.subcl) %>%" 
@@ -80,29 +108,221 @@
                     </div>
                   </td>
                   <td>
-                    <div class="progress" style="height: 30px">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    <div class="progress" style="height: 25px">
+                      <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                     </div>
                   </td>
-                  <td class="subpayroll-date subpayroll-days-old" 
-                      data-bs-toggle="modal" 
-                      data-bs-target="#editSubPayrollDateModal" 
-                      data-project-number="<%= project.projectnumber %>" 
-                      data-subpayroll-date="<%= project.subpayroll ? new Date(project.subpayroll).toISOString().split('T')[0] : '' %>">
-                      <%= project.subpayroll ? formatDateDisplay(project.subpayroll) : '' %>
+                  <td class="subpayroll-date" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#editSubPayrollDateModal" 
+                        data-project-number="<%= project.projectnumber %>" 
+                        data-subpayroll-date="<%= project.subpayroll ? new Date(project.subpayroll).toISOString() : '' %>">
+                        <% if (project.subpayroll) { %>
+                            <% const date = new Date(project.subpayroll); %>
+                            <% const formattedDate = date.toLocaleDateString('en-US', {
+                                timeZone: 'UTC', // Critical - use UTC for display
+                                month: '2-digit',
+                                day: '2-digit',
+                                year: 'numeric'
+                            }); %>
+                            <span class="date-display"><%= formattedDate %></span>
+                            <span class="days-old-badge badge"></span>
+                        <% } else { %>
+                            <span class="badge bg-secondary">Not set</span>
+                        <% } %>
+                    </td>
+                  <td><span class="badge bg-dark"><%= project.projecttracking %></span></td>
+                  <td><span class="badge bg-secondary"><%= project.projectportal %></span></td>
+                </tr>
+                <tr class="collapse" id="details-<%= project.projectnumber %>">
+                  <td colspan="10">
                   </td>
-                  <td><%= project.projecttracking %></td>
-                  <td><%= project.projectportal %></td>
                 </tr>
               <% }); %>
             </tbody>
         </table>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
-    <script src="submodal.js"></script>
-    <script src="projects.js"></script>
-    <script src="search.js"></script>  
+    
+    <script>
+    // Initialize tooltips
+    tippy('[data-tippy-content], [title]', {
+        allowHTML: true,
+        theme: 'dark'
+    });
+
+    // Payroll Date Handling
+    document.querySelectorAll('.subpayroll-date').forEach(cell => {
+        const payrollDateStr = cell.dataset.subpayrollDate;
+        if (payrollDateStr) {
+            try {
+                const date = new Date(payrollDateStr);
+                if (!isNaN(date.getTime())) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    date.setHours(0, 0, 0, 0);
+                    
+                    const timeDiff = today - date;
+                    const daysOld = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                    
+                    // Update days old badge
+                    const daysOldBadge = cell.querySelector('.days-old-badge');
+                    if (daysOldBadge) {
+                        daysOldBadge.textContent = `${daysOld}d`;
+                        
+                        // Clear previous styling
+                        daysOldBadge.classList.remove('bg-danger', 'bg-warning', 'bg-success', 'text-dark');
+                        
+                        // Apply new styling
+                        if (daysOld > 14) {
+                            daysOldBadge.classList.add('bg-danger');
+                        } else {
+                            daysOldBadge.classList.add('bg-success');
+                        }
+                    }
+                    
+                    // Update cell styling
+                    cell.classList.remove('text-danger', 'fw-bold', 'text-success');
+                    if (daysOld > 14) {
+                        cell.classList.add('text-danger', 'fw-bold');
+                    } else {
+                        cell.classList.add('text-success');
+                    }
+                    
+                    // Update tooltip
+                    const month = date.getMonth() + 1;
+                    const day = date.getDate();
+                    const year = date.getFullYear();
+                    cell.setAttribute('title', `Payroll is ${daysOld} days old (${month}/${day}/${year})`);
+                }
+            } catch (e) {
+                console.error('Error processing date:', e);
+            }
+        }
+    });
+
+    // Modal handling
+    const editModal = document.getElementById('editSubPayrollDateModal');
+    if (editModal) {
+        editModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const projectNumber = button.getAttribute('data-project-number');
+        const payrollDate = button.getAttribute('data-subpayroll-date');
+        
+        document.getElementById('projectNumberInput').value = projectNumber;
+        
+        // Fix for timezone issue - parse the date in UTC
+        if (payrollDate) {
+            const date = new Date(payrollDate);
+            if (!isNaN(date.getTime())) {
+            // Get UTC components to avoid timezone shifts
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            document.getElementById('subPayrollDateInput').value = `${year}-${month}-${day}`;
+            } else {
+            document.getElementById('subPayrollDateInput').value = '';
+            }
+        } else {
+            document.getElementById('subPayrollDateInput').value = '';
+        }
+        });
+    }
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        document.querySelectorAll('#projectTableBody tr:not(.collapse)').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    document.getElementById('clearSearch').addEventListener('click', function() {
+        document.getElementById('searchInput').value = '';
+        document.querySelectorAll('#projectTableBody tr:not(.collapse)').forEach(row => {
+            row.style.display = '';
+        });
+    });
+
+    document.getElementById('editSubPayrollDateForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const projectNumber = document.getElementById('projectNumberInput').value;
+  const newDate = document.getElementById('subPayrollDateInput').value;
+  
+  if (!newDate) {
+    alert('Please select a valid date');
+    return;
+  }
+  
+  try {
+    const response = await fetch('/update-subpayroll-date', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        projectNumber: projectNumber,
+        subpayroll: newDate
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to update subpayroll date');
+    }
+    
+    if (data.success) {
+      // Update the UI with UTC-formatted date from server
+      const payrollDateCell = document.querySelector(`.subpayroll-date[data-project-number="${projectNumber}"]`);
+      if (payrollDateCell) {
+        // Update displayed text
+        payrollDateCell.querySelector('.date-display').textContent = data.formattedDate;
+        
+        // Update data attribute with raw date
+        payrollDateCell.dataset.subpayrollDate = new Date(data.subpayroll + 'T00:00:00Z').toISOString();
+        
+        // Calculate days old using UTC
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const date = new Date(data.subpayroll + 'T00:00:00Z');
+        
+        const timeDiff = today - date;
+        const daysOld = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        
+        // Update badge
+        const daysOldBadge = payrollDateCell.querySelector('.days-old-badge');
+        daysOldBadge.textContent = `${daysOld}d`;
+        
+        // Update styling
+        payrollDateCell.classList.remove('text-danger', 'fw-bold', 'text-success');
+        daysOldBadge.classList.remove('bg-danger', 'bg-success');
+        
+        if (daysOld > 14) {
+          payrollDateCell.classList.add('text-danger', 'fw-bold');
+          daysOldBadge.classList.add('bg-danger');
+        } else {
+          payrollDateCell.classList.add('text-success');
+          daysOldBadge.classList.add('bg-success');
+        }
+        
+        // Update tooltip
+        payrollDateCell.setAttribute('title', `Payroll is ${daysOld} days old (${data.formattedDate})`);
+      }
+      
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('editSubPayrollDateModal'));
+      modal.hide();
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error updating subpayroll date: ' + error.message);
+  }
+});
+    </script>
 </body>
 </html>

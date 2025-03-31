@@ -6,123 +6,162 @@
     <title>Compliance Details</title>
     <%- include("sidebar2.ejs") %>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .content {
+            padding: 20px;
+        }
+        .accordion {
+            margin-bottom: 30px;
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .month-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .form-section {
+            margin-bottom: 1.5rem;
+        }
+        .submit-section {
+            margin-top: 2rem;
+        }
+    </style>
 </head>
 <body>
-    <h1 class="content text-center">Compliance Details</h1> <br><br>
-  <form action="/projects/<%= project.projectnumber %>/<%= project.subcontractor%>" method="post" id="myForm">
-    <div class="accordion content">
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-              Start of Work
-            </button>
-          </h2>
-          <div id="collapseOne" class="accordion-collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-            <div class="accordion-body">
-              <strong>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="inputSubDAS" name="subDAS" value="true" <%= project.subdas ? 'checked' : '' %> />
-                  <label class="form-check-label" for="inputSubDAS">DAS 140/142 Submissions</label>
+    <div class="container-fluid">
+        <div class="content">
+            <h1 class="text-center mb-4">Compliance Details</h1>
+            
+            <form action="/projects/<%= project.projectnumber %>/<%= project.subcontractor%>" method="post" id="myForm">
+                <div class="accordion" id="complianceAccordion">
+                    
+                    <!-- Start of Work Section -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <i class="bi bi-check-circle me-2"></i> Start of Work Requirements
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#complianceAccordion">
+                            <div class="accordion-body">
+                                <div class="form-section">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="inputSubDAS" name="subDAS" value="true" <%= project.subdas ? 'checked' : '' %> />
+                                        <label class="form-check-label" for="inputSubDAS">DAS 140/142 Submissions</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="inputSubFBS" name="subFBS" value="true" <%= project.subfbs ? 'checked' : '' %> />
+                                        <label class="form-check-label" for="inputSubFBS">Fringe Benefits Statement</label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="inputSubCL" name="subCL" value="true" <%= project.subcl ? 'checked' : '' %> />
+                                        <label class="form-check-label" for="inputSubCL">Labor Law Checklist</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Weeklies Section -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <i class="bi bi-calendar-week me-2"></i> Weekly Requirements
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#complianceAccordion">
+                            <div class="accordion-body">
+                                <div class="form-section">
+                                    <div class="mb-3">
+                                        <label for="inputSubPayroll" class="form-label">Current CPR Date</label>
+                                        <input type="date" id="inputSubPayroll" class="form-control" name="subPayroll" value="<%= project.subpayroll ? new Date(project.subpayroll).toISOString().split('T')[0] : '' %>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Monthlies Section -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <i class="bi bi-calendar-month me-2"></i> Monthly Requirements
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#complianceAccordion">
+                            <div class="accordion-body">
+                                <div class="form-section">
+                                    <h5 class="mb-3">Training Funds Submission</h5>
+                                    <div class="month-checkboxes">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="januaryCheck" name="trainingMonths" value="january">
+                                            <label class="form-check-label" for="januaryCheck">January</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="februaryCheck" name="trainingMonths" value="february">
+                                            <label class="form-check-label" for="februaryCheck">February</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="marchCheck" name="trainingMonths" value="march">
+                                            <label class="form-check-label" for="marchCheck">March</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="aprilCheck" name="trainingMonths" value="april">
+                                            <label class="form-check-label" for="aprilCheck">April</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="mayCheck" name="trainingMonths" value="may">
+                                            <label class="form-check-label" for="mayCheck">May</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="juneCheck" name="trainingMonths" value="june">
+                                            <label class="form-check-label" for="juneCheck">June</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="julyCheck" name="trainingMonths" value="july">
+                                            <label class="form-check-label" for="julyCheck">July</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="augustCheck" name="trainingMonths" value="august">
+                                            <label class="form-check-label" for="augustCheck">August</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="septemberCheck" name="trainingMonths" value="september">
+                                            <label class="form-check-label" for="septemberCheck">September</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="octoberCheck" name="trainingMonths" value="october">
+                                            <label class="form-check-label" for="octoberCheck">October</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="novemberCheck" name="trainingMonths" value="november">
+                                            <label class="form-check-label" for="novemberCheck">November</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="decemberCheck" name="trainingMonths" value="december">
+                                            <label class="form-check-label" for="decemberCheck">December</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="inputSubFBS" name="subFBS" value="true" <%= project.subfbs ? 'checked' : '' %> />
-                  <label class="form-check-label" for="inputSubFBS">Fringe Benefits Statement</label>
+                
+                <!-- Submit Button -->
+                <div class="submit-section text-center">
+                    <button type="submit" class="btn btn-primary px-4">Update Compliance</button>
                 </div>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="inputSubCL" name="subCL" value="true" <%= project.subcl ? 'checked' : '' %> />
-                  <label class="form-check-label" for="inputSubCL">Labor Law Checklist</label>
-                </div>
-              </strong>
-            </div>
-          </div>
+            </form>
         </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="weeklies">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-              Weeklies
-            </button>
-          </h2>
-          <div id="collapseTwo" class="accordion-collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-            <div class="accordion-body">
-              <strong>
-                <div class="form-check col-md-2">
-                    <label for="inputSubPayroll">Current CPR Date</label>
-                    <input type="date" id="inputSubPayroll" class="form-control" name="subPayroll" value="<%= project.subpayroll ? new Date(project.subpayroll).toISOString().split('T')[0] : '' %>">
-                </div>
-              </strong> 
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="monthlies">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-              Monthlies
-            </button>
-          </h2>
-          <div id="collapseThree" class="accordion-collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-            <div class="accordion-body">
-              <strong> Training Funds</strong>
-                <div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">January</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                        <label class="form-check-label" for="inlineCheckbox2">February</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">March</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                        <label class="form-check-label" for="inlineCheckbox2">April</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">May</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                        <label class="form-check-label" for="inlineCheckbox2">June</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">July</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                        <label class="form-check-label" for="inlineCheckbox2">August</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">September</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                        <label class="form-check-label" for="inlineCheckbox2">October</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">November</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                        <label class="form-check-label" for="inlineCheckbox2">December</label>
-                    </div>
-                </div>
-            </div>
-          </div>
-        </div>
-        <br>
-        <div class="row justify-content-md-center">
-            <div class="col-md-1">
-                <button type="submit" class="btn btn-primary mb-4">Update</button>
-            </div>
-        </div>
-      </form>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        // You can add any JavaScript functionality here if needed
+    </script>
 </body>
 </html>

@@ -6,172 +6,578 @@
     <title>NXL Compliance Tracker</title>
     <%- include("sidebar2.ejs") %>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        .text-danger {
-            color:red;
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #0dcaf0;
         }
-        .text-success {
-            color:green;
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .table-sm {
+            font-size: 0.875rem;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nested-row {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-bar {
+            max-width: 500px;
+        }
+        
+        .badge-status {
+            font-size: 0.75rem;
+            padding: 0.35em 0.65em;
+        }
+        
+        .payroll-date {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .payroll-date:hover {
+            background-color: rgba(13, 110, 253, 0.1);
+        }
+        
+        .collapse-toggle {
+            transition: transform 0.2s;
+        }
+        
+        .collapsed .collapse-toggle {
+            transform: rotate(-90deg);
+        }
+        
+        .wage-cell {
+            min-width: 60px;
+        }
+        
+        /* Color coding for status indicators */
+        .status-compliant {
+            color: var(--success-color);
+        }
+        
+        .status-warning {
+            color: var(--warning-color);
+        }
+        
+        .status-danger {
+            color: var(--danger-color);
+        }
+        
+        /* Tooltip styling */
+        .tippy-box {
+            background-color: #2d3748;
+            color: white;
+        }
+        
+        /* Modal styling */
+        .modal-content {
+            background-color: #343a40;
+            color: white;
+        }
+        
+        /* Filter dropdowns */
+        .dropdown-menu {
+            max-height: 300px;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
-  <div class="modal" id="editPayrollDateModal" tabindex="-1" aria-labelledby="editPayrollDateModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editPayrollDateModalLabel">Edit Payroll Date</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editPayrollDateForm">
-            <div class="mb-3">
-              <label for="payrollDateInput" class="form-label">Payroll Date</label>
-              <input type="date" class="form-control" id="payrollDateInput" required>
-              <input type="hidden" id="projectNumberInput">
+    <!-- Edit Payroll Date Modal -->
+    <div class="modal fade" id="editPayrollDateModal" tabindex="-1" aria-labelledby="editPayrollDateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPayrollDateModalLabel">Edit Payroll Date</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPayrollDateForm">
+                        <div class="mb-3">
+                            <label for="payrollDateInput" class="form-label">Payroll Date</label>
+                            <input type="date" class="form-control bg-dark text-white" id="payrollDateInput" required>
+                            <input type="hidden" id="projectNumberInput">
+                        </div>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-    <h1 class="content text-center">Compliance Tracker</h1>
-    <div class="d-flex justify-content-end">
-        <div class="dropdown d-flex gap-2 justify-content-end mb-4 me-2">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownProjectManager" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter by Project Manager</button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownProjectManager" id="dropdownProjectManagerMenu"></ul>
-        </div>
-        <div class="dropdown d-flex gap-2 justify-content-end mb-4 me-2">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownProjectCustomer" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Filter by Customer </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownProjectCustomer" id="dropdownProjectCustomerMenu"></ul>
         </div>
     </div>
-    <div class="d-flex mb-3">
-        <input type="text" id="searchInput" class="form-control search-bar content" placeholder="Search by Project Number, DIR or Project Name" style="width:100%">
+
+    <div class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Compliance Tracker</h1>
+            <div class="d-flex gap-2">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownProjectManager" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-funnel-fill me-1"></i>Project Manager
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownProjectManager" id="dropdownProjectManagerMenu">
+                        <li><a class="dropdown-item" href="#" data-filter="manager" data-value="all">All Managers</a></li>
+                        <!-- Will be populated by JavaScript -->
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownProjectCustomer" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-funnel-fill me-1"></i>Customer
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownProjectCustomer" id="dropdownProjectCustomerMenu">
+                        <li><a class="dropdown-item" href="#" data-filter="customer" data-value="all">All Customers</a></li>
+                        <!-- Will be populated by JavaScript -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search projects...">
+                <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table table-sm table-hover" id="complianceTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 40px;"></th>
+                        <th>Project Number</th>
+                        <th>DIR Number</th>
+                        <th>Project Name</th>
+                        <th>Project Manager</th>
+                        <th>Customer</th>
+                        <th>Payroll Date</th>
+                        <th>DAS Status</th>
+                        <th>Tracking</th>
+                        <th>LCP Portal</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider" id="projectTableBody">
+                    <% 
+                    const wageMap = {};
+                    wageData.forEach(row => {
+                        if (!wageMap[row.projectnumber]) {
+                            wageMap[row.projectnumber] = row;
+                        }
+                    });
+                    %>
+                    <% complianceData.forEach(function(complianceData) { %>
+                    <tr class="main-row" 
+                        data-project-number="<%= complianceData.projectnumber %>"
+                        data-project-manager="<%= complianceData.projectmanager %>"
+                        data-customer="<%= complianceData.projectcustomer %>">
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-secondary p-1 collapse-toggle" 
+                                    data-bs-toggle="collapse" 
+                                    data-bs-target="#details-<%= complianceData.projectnumber %>"
+                                    aria-expanded="false"
+                                    aria-controls="details-<%= complianceData.projectnumber %>">
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                        </td>
+                        <td data-tippy-content="<div class='p-2'>
+                            <h6>Project Notes</h6>
+                            <p><%= complianceData.projectnotes ? complianceData.projectnotes.replace(/\n/g, '<br>') : 'No notes available' %></p>
+                        </div>">
+                            <a href="/projects/<%= complianceData.projectnumber %>" class="text-decoration-none">
+                                <%= complianceData.projectnumber %>
+                            </a>
+                        </td>
+                        <td><%= complianceData.dirnumber %></td>
+                        <td><%= complianceData.projectname %></td>
+                        <td><%= complianceData.projectmanager %></td>
+                        <td><%= complianceData.projectcustomer %></td>
+                        <td class="payroll-date" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editPayrollDateModal" 
+                            data-project-number="<%= complianceData.projectnumber %>" 
+                            data-payroll-date="<%= complianceData.payrolldate %>">
+                            <% if (complianceData.payrolldate) { %>
+                                <% const [year, month, day] = complianceData.payrolldate.split('-'); %>
+                                <span class="date-display"><%= `${month}/${day}/${year}` %></span>
+                                <span class="days-old-badge badge"></span>
+                            <% } else { %>
+                                <span class="badge bg-secondary">Not set</span>
+                            <% } %>
+                        </td>
+                        <td class="das-status" 
+                            data-dasfiledate="<%= complianceData.dasfiledate %>"
+                            data-dasonsitedate="<%= complianceData.dasonsitedate %>"
+                            data-actualonsitedate="<%= complianceData.actualonsitedate %>">         
+                        </td>
+                        <td>
+                            <span class="badge badge-status bg-secondary">
+                                <%= complianceData.projecttracking || 'Not set' %>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-status bg-dark">
+                                <%= complianceData.projectportal || 'Not set' %>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr class="collapse nested-row" id="details-<%= complianceData.projectnumber %>">
+                        <td colspan="10">
+                            <div class="p-2 bg-dark rounded">
+                                <h6 class="mb-3">Wage Details</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Determination</th>
+                                                <th>Basic Hrly</th>
+                                                <th>H&W</th>
+                                                <th>Pension</th>
+                                                <th>Vacation</th>
+                                                <th>Training</th>
+                                                <th>Other</th>
+                                                <th colspan="3" class="text-primary">Inc 1</th>
+                                                <th colspan="3" class="text-primary-emphasis">Inc 2</th>
+                                                <th colspan="3" class="text-info">Inc 3</th>
+                                                <th colspan="3" class="text-success">Inc 4</th>
+                                            </tr>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th class="text-primary">BHR</th>
+                                                <th class="text-primary">H&W</th>
+                                                <th class="text-primary">Pension</th>
+                                                <th class="text-primary-emphasis">BHR</th>
+                                                <th class="text-primary-emphasis">H&W</th>
+                                                <th class="text-primary-emphasis">Pension</th>
+                                                <th class="text-info">BHR</th>
+                                                <th class="text-info">H&W</th>
+                                                <th class="text-info">Pension</th>
+                                                <th class="text-success">BHR</th>
+                                                <th class="text-success">H&W</th>
+                                                <th class="text-success">Pension</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% const wage = wageMap[complianceData.projectnumber]; %>
+                                            <tr>
+                                                <td><%= complianceData.wagedetermination %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.bhr : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.haw : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.pension : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.vacation : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.training : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.other : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc1BHR : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc1HAW : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc1PENSION : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc2BHR : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc2HAW : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc2PENSION : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc3BHR : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc3HAW : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc3PENSION : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc4BHR : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc4HAW : '-' %></td>
+                                                <td class="wage-cell">$<%= wage ? wage.inc4PENSION : '-' %></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="d-flex">
-        <table class="table table-sm content table-auto table-hover" style="table-layout: auto; width: 100%">
-            <thead class="table">
-                <tr class="nested-row">
-                    <th class="invisible">Sub</th>
-                    <th>Project Number</th>
-                    <th>DIR Number</th>
-                    <th>Project Name</th>
-                    <th>Project Manager</th>
-                    <th>Customer Name</th>
-                    <th>Payroll Date</th>
-                    <th>DAS</th>
-                    <th>Tracking</th>
-                    <th>LCP Portal</th>
-                </tr>
-            </thead>
-            <tbody class="table-group-divider" id="projectTableBody">
-              <% 
-                const wageMap = {};
-                wageData.forEach(row => {
-                    if (!wageMap[row.projectnumber]) {
-                        wageMap[row.projectnumber] = row;
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script>
+          // Initialize tooltips
+    tippy('[data-tippy-content]', {
+        allowHTML: true,
+        interactive: true,
+        placement: 'right',
+        theme: 'dark',
+    });
+
+// Payroll Date Handling
+document.querySelectorAll('.payroll-date').forEach(cell => {
+    const payrollDateStr = cell.dataset.payrollDate;
+    if (payrollDateStr) {
+        const [year, month, day] = payrollDateStr.split('-');
+        const payrollDate = new Date(year, month - 1, day);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const timeDiff = today - payrollDate;
+        const daysOld = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        
+        // Update days old badge
+        const daysOldBadge = cell.querySelector('.days-old-badge');
+        daysOldBadge.textContent = `${daysOld}d`;
+        
+        // Clear previous styling
+        cell.classList.remove('text-danger', 'fw-bold', 'text-warning', 'text-success');
+        daysOldBadge.classList.remove('bg-danger', 'bg-warning', 'bg-success', 'text-dark');
+        
+        // Apply new styling based on 14-day threshold
+        if (daysOld > 14) {
+            cell.classList.add('text-danger', 'fw-bold');
+            daysOldBadge.classList.add('bg-danger');
+        } else {
+            cell.classList.add('text-success');
+            daysOldBadge.classList.add('bg-success');
+        }
+        
+        // Add tooltip
+        cell.setAttribute('title', `Payroll is ${daysOld} days old (${month}/${day}/${year})`);
+    }
+});
+
+    // Initialize dropdown filters
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get unique managers and customers
+        const managers = new Set();
+        const customers = new Set();
+        
+        document.querySelectorAll('.main-row').forEach(row => {
+            managers.add(row.dataset.projectManager);
+            customers.add(row.dataset.customer);
+        });
+
+        // Populate manager dropdown
+        const managerMenu = document.getElementById('dropdownProjectManagerMenu');
+        managers.forEach(manager => {
+            if (manager) {
+                const item = document.createElement('li');
+                item.innerHTML = `<a class="dropdown-item" href="#" data-filter="manager" data-value="${manager}">${manager}</a>`;
+                managerMenu.appendChild(item);
+            }
+        });
+
+        // Populate customer dropdown
+        const customerMenu = document.getElementById('dropdownProjectCustomerMenu');
+        customers.forEach(customer => {
+            if (customer) {
+                const item = document.createElement('li');
+                item.innerHTML = `<a class="dropdown-item" href="#" data-filter="customer" data-value="${customer}">${customer}</a>`;
+                customerMenu.appendChild(item);
+            }
+        });
+
+        // Filter functionality
+        document.querySelectorAll('[data-filter]').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const filterType = this.dataset.filter;
+                const filterValue = this.dataset.value;
+                
+                document.querySelectorAll('.main-row').forEach(row => {
+                    if (filterValue === 'all') {
+                        row.style.display = '';
+                    } else {
+                        const rowValue = row.dataset[`${filterType === 'manager' ? 'projectManager' : 'customer'}`];
+                        row.style.display = rowValue === filterValue ? '' : 'none';
                     }
                 });
-                %>
-                <% complianceData.forEach(function(complianceData) { %>
-                  <tr id="projectTableBodyMain" data-dasfiledate="<%= complianceData.dasfiledate%>" data-dasonsitedate="<%= complianceData.dasonsitedate %>" data-actualonsitedate="<%= complianceData.actualonsitedate %>" data-payrolldate="<%= complianceData.payrolldate%>">
-                    <td>
-                      <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="collapse" data-bs-target="#<%= complianceData.projectnumber %>">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-chevron-expand" viewBox="0 0 16 16">
-                          <path fill-rule="evenodd" d="M3.646 9.146a.5.5 0 0 1 .708 0L8 12.793l3.646-3.647a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708m0-2.292a.5.5 0 0 0 .708 0L8 3.207l3.646 3.647a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 0 0 0 .708"/>
-                        </svg>
-                      </button>
-                    </td>
-                    <td data-tippy-content="<div>
-                      <p><strong>Project Notes:</strong></p>
-                      <%- complianceData.projectnotes ? complianceData.projectnotes
-                          .replace(/\n/g, '</p><p>')
-                          .replace(/^/, '<p>')
-                          .replace(/$/, '</p>') : '<p>No notes available.</p>' %>
-                  </div>">
-                      <a href="/projects/<%= complianceData.projectnumber %>"><%= complianceData.projectnumber %></a>
-                  </td>
-                    <td><%= complianceData.dirnumber %></td>
-                    <td><%= complianceData.projectname %></td>
-                    <td id="projectManagerList"><%= complianceData.projectmanager %></td>
-                    <td id="customerList"><%= complianceData.projectcustomer %></td>  
-                    <td class="payroll-date payroll-days-old" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editPayrollDateModal" 
-                        data-project-number="<%= complianceData.projectnumber %>" 
-                        data-payroll-date="<%= complianceData.payrolldate %>">
-                      <%= complianceData.payrolldate ? new Date(complianceData.payrolldate).toLocaleDateString() : '' %>
-                    </td>
-                    </td>
-                    <td id="dasStatus"></td>
-                    <td><%= complianceData.projecttracking %></td>
-                    <td><%= complianceData.projectportal %></td>                       
-                  </tr>
-                  <tr class="collapse nested-row" id="<%= complianceData.projectnumber %>">
-                    <td colspan="10">
-                      <table class="table-sm table-bordered" style="table-layout: auto; width: 100%">
-                        <thead>
-                          <tr class="nested-row">
-                            <th>Determination</th>
-                            <th>Basic Hrly</th>
-                            <th>H&W</th>
-                            <th>Pension</th>
-                            <th>Vacation</th>
-                            <th>Training</th>
-                            <th>Other</th>
-                            <th class="text-primary">Inc1-BHR</th>
-                            <th class="text-primary">Inc1-H&W</th>
-                            <th class="text-primary">Inc1-Pension</th>
-                            <th class="text-primary-emphasis">Inc2-BHR</th>
-                            <th class="text-primary-emphasis">Inc2-H&W</th>
-                            <th class="text-primary-emphasis">Inc2-Pension</th>
-                            <th class="text-info">Inc3-BHR</th>
-                            <th class="text-info">Inc3-H&W</th>
-                            <th class="text-info">Inc3-Pension</th>
-                            <th class="text-success">Inc4-BHR</th>
-                            <th class="text-success">Inc4-H&W</th>
-                            <th class="text-success">Inc4-Pension</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        <% const wage = wageMap[complianceData.projectnumber]; %>
-                        <tr class="nested-row">
-                          <td><%= complianceData.wagedetermination %></td>
-                          <td>$<%= wage ? wage.bhr : '-' %></td>
-                          <td>$<%= wage ? wage.haw : '-' %></td>
-                          <td>$<%= wage ? wage.pension : '-' %></td>
-                          <td>$<%= wage ? wage.vacation : '-' %></td>
-                          <td>$<%= wage ? wage.training : '-' %></td>
-                          <td>$<%= wage ? wage.other : '-' %></td>
-                          <td>$<%= wage ? wage.inc1BHR : '-' %></td>
-                          <td>$<%= wage ? wage.inc1HAW : '-' %></td>
-                          <td>$<%= wage ? wage.inc1PENSION : '-' %></td>
-                          <td>$<%= wage ? wage.inc2BHR : '-' %></td>
-                          <td>$<%= wage ? wage.inc2HAW : '-' %></td>
-                          <td>$<%= wage ? wage.inc2PENSION : '-' %></td>
-                          <td>$<%= wage ? wage.inc3BHR : '-' %></td>
-                          <td>$<%= wage ? wage.inc3HAW : '-' %></td>
-                          <td>$<%= wage ? wage.inc3PENSION : '-' %></td>
-                          <td>$<%= wage ? wage.inc4BHR : '-' %></td>
-                          <td>$<%= wage ? wage.inc4HAW : '-' %></td>
-                          <td>$<%= wage ? wage.inc4PENSION : '-' %></td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                <% }); %>
-              </tbody>
-        </table>
-    </div>
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/tippy.js@6"></script>
-    <script src="modal.js"></script>
-    <script src="projects.js"></script>
-    <script src="search.js"></script>  
-    <script src="tracker.js"></script>
+                
+                // Update dropdown button text
+                const dropdownButton = document.getElementById(`dropdownProject${filterType.charAt(0).toUpperCase() + filterType.slice(1)}`);
+                dropdownButton.textContent = filterValue === 'all' ? 
+                    `Filter by ${filterType === 'manager' ? 'Project Manager' : 'Customer'}` : 
+                    filterValue;
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const clearSearch = document.getElementById('clearSearch');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            document.querySelectorAll('.main-row').forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+            });
+        });
+        
+        clearSearch.addEventListener('click', function() {
+            searchInput.value = '';
+            document.querySelectorAll('.main-row').forEach(row => {
+                row.style.display = '';
+            });
+        });
+
+        // Payroll date modal handling
+        const editModal = document.getElementById('editPayrollDateModal');
+        if (editModal) {
+            editModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const projectNumber = button.getAttribute('data-project-number');
+                const payrollDate = button.getAttribute('data-payroll-date');
+                
+                const modalTitle = editModal.querySelector('.modal-title');
+                const projectNumberInput = editModal.querySelector('#projectNumberInput');
+                const payrollDateInput = editModal.querySelector('#payrollDateInput');
+                
+                modalTitle.textContent = `Edit Payroll Date - ${projectNumber}`;
+                projectNumberInput.value = projectNumber;
+                payrollDateInput.value = payrollDate || '';
+            });
+        }
+    });
+
+    // DAS Status Evaluation
+document.querySelectorAll('.das-status').forEach(cell => {
+    const dasFileDate = cell.dataset.dasfiledate;
+    const dasOnsiteDate = cell.dataset.dasonsitedate;
+    const actualOnsiteDate = cell.dataset.actualonsitedate;
+    
+    let status, tooltip;
+    
+    if (!dasFileDate || !dasOnsiteDate) {
+        status = 'Missing DAS';
+        tooltip = 'DAS documents not filed';
+    } else {
+        const dasFile = new Date(dasFileDate);
+        const dasOnsite = new Date(dasOnsiteDate);
+        const actualOnsite = actualOnsiteDate ? new Date(actualOnsiteDate) : null;
+        
+        if (actualOnsite && dasOnsite.getTime() === actualOnsite.getTime()) {
+            status = 'Compliant';
+            tooltip = 'DAS documents filed and onsite dates match';
+        } else {
+            status = 'Submitted';
+            tooltip = 'DAS documents filed but onsite dates may not match';
+        }
+    }
+    
+    // Set badge class based on status
+    let badgeClass;
+    if (status === 'Compliant') {
+        badgeClass = 'bg-success';
+    } else if (status === 'Submitted') {
+        badgeClass = 'bg-warning text-dark';
+    } else {
+        badgeClass = 'bg-danger';
+    }
+    
+    cell.innerHTML = `<span class="badge ${badgeClass}" data-bs-toggle="tooltip" title="${tooltip}">${status}</span>`;
+});
+
+// Initialize tooltips for the DAS status badges
+tippy('[data-bs-toggle="tooltip"]');
+
+// Payroll Date Modal Form Submission
+document.getElementById('editPayrollDateForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const projectNumber = document.getElementById('projectNumberInput').value;
+    const newDate = document.getElementById('payrollDateInput').value;
+    
+    if (!newDate) {
+        alert('Please select a valid date');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/update-payroll-date', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                projectNumber: projectNumber,
+                payrolldate: newDate
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to update payroll date');
+        }
+        
+        if (data.success) {
+            // Update the UI
+            const payrollDateCell = document.querySelector(`.payroll-date[data-project-number="${projectNumber}"]`);
+            if (payrollDateCell) {
+                // Update the data attribute
+                payrollDateCell.dataset.payrollDate = newDate;
+                
+                // Update the displayed date
+                payrollDateCell.querySelector('.date-display').textContent = data.formattedDate;
+                
+                // Recalculate and update days old badge
+                const [year, month, day] = newDate.split('-');
+                const payrollDate = new Date(year, month - 1, day);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const timeDiff = today - payrollDate;
+                const daysOld = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                
+                const daysOldBadge = payrollDateCell.querySelector('.days-old-badge');
+                daysOldBadge.textContent = `${daysOld}d`;
+                
+                // Update styling
+                payrollDateCell.classList.remove('text-danger', 'fw-bold', 'text-warning', 'text-success');
+                daysOldBadge.classList.remove('bg-danger', 'bg-warning', 'bg-success', 'text-dark');
+                
+                if (daysOld > 14) {
+                    payrollDateCell.classList.add('text-danger', 'fw-bold');
+                    daysOldBadge.classList.add('bg-danger');
+                } else {
+                    payrollDateCell.classList.add('text-success');
+                    daysOldBadge.classList.add('bg-success');
+                }
+                
+                // Update tooltip
+                payrollDateCell.setAttribute('title', `Payroll is ${daysOld} days old (${month}/${day}/${year})`);
+            }
+            
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editPayrollDateModal'));
+            modal.hide();
+            
+        } else {
+            throw new Error(data.message || 'Failed to update payroll date');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating payroll date: ' + error.message);
+    }
+});
+    </script>
 </body>
 </html>

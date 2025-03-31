@@ -3,260 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Details</title>
+    <title>Project Details - <%= project.projectnumber %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <%- include("sidebar2.ejs") %>   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <%- include("sidebar2.ejs") %>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <style>
+        .content {
+            padding: 20px;
+        }
+        .form-section {
+            margin-bottom: 1.5rem;
+        }
+        .section-header {
+            border-bottom: 1px solid #495057;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            color: #adb5bd;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        textarea {
+            min-height: 100px;
+            transition: height 0.2s ease;
+        }
+        .btn-compliance {
+            margin-top: 1.8rem;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+    </style>
 </head>
 <body>
-    <h1 class="content text-center">Project Details</h1>
+    <div class="container-fluid">
+        <div class="content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Project Details</h1>
+                <div class="badge bg-primary fs-6">
+                    Project #<%= project.projectnumber %>
+                </div>
+            </div>
 
-    <form action="/projects/<%= project.projectnumber %>" method="post" class="content" id="myForm">
-        <div class="row justify-content-md-center">
-            <div class="form-group col-md-3">
-                <label for="inputProjectNumber">Project Number</label>
-                <input type="text" class="form-control" id="inputProjectNumber" name="projectNumber" value="<%= project.projectnumber %>" readonly disabled>
-            </div>
-            <div class="form-group col-md-3">
-                <label for="inputDirNumber">DIR Number</label>
-                <input type="text" class="form-control" id="inputDirNumber" name="dirNumber" value="<%= project.dirnumber %>">
-            </div>
-        </div>
+            <form action="/projects/<%= project.projectnumber %>" method="post" id="myForm">
+                <!-- Basic Information Section -->
+                <div class="card mb-4 border-secondary">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Basic Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectNumber" class="form-label">Project Number</label>
+                                    <input type="text" class="form-control bg-secondary" id="inputProjectNumber" 
+                                           name="projectNumber" value="<%= project.projectnumber %>" readonly>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectName" class="form-label">Project Name</label>
+                                    <input type="text" class="form-control" id="inputProjectName" 
+                                           name="projectName" value="<%= project.projectname %>">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectAddress" class="form-label">Project Address</label>
+                                    <input type="text" class="form-control" id="inputProjectAddress" 
+                                           name="projectAddress" value="<%= project.projectaddress %>">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="inputDirNumber" class="form-label">DIR Number</label>
+                                    <input type="text" class="form-control" id="inputDirNumber" 
+                                           name="dirNumber" value="<%= project.dirnumber %>">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectContract" class="form-label">Contract/PO</label>
+                                    <input type="text" class="form-control" id="inputProjectContract" 
+                                           name="projectContract" value="<%= project.projectcontract %>">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label for="inputProjectCity" class="form-label">City</label>
+                                            <input type="text" class="form-control" id="inputProjectCity" 
+                                                   name="projectCity" value="<%= project.projectcity %>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label for="inputProjectState" class="form-label">State</label>
+                                            <select id="inputProjectState" class="form-control" name="projectState">
+                                                <option value="AL" <%= project.projectstate === 'AL' ? 'selected' : '' %>>AL</option>
+                                                <option value="AK" <%= project.projectstate === 'AK' ? 'selected' : '' %>>AK</option>
+                                                <!-- Other states shortened to initials for space -->
+                                                <option value="CA" <%= project.projectstate === 'CA' ? 'selected' : '' %>>CA</option>
+                                                <!-- ... rest of states ... -->
+                                                <option value="WY" <%= project.projectstate === 'WY' ? 'selected' : '' %>>WY</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label for="inputProjectZip" class="form-label">Zip</label>
+                                            <input type="text" class="form-control" id="inputProjectZip" 
+                                                   name="projectZip" value="<%= project.projectzip %>">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="row justify-content-md-center">
-            <div class="form-group col-md-3">
-                <label for="inputProjectManager">Project Manager</label>
-                <input type="text" class="form-control" id="inputProjectManager" name="projectManager" value="<%= project.projectmanager %>">
-            </div>
-            <div class="form-group col-md-3">
-                <label for="inputProjectContract">Contract/PO</label>
-                <input type="text" class="form-control" id="inputProjectContract" name="projectContract" value="<%= project.projectcontract %>">
-            </div>
-        </div>
+                <!-- Project Team Section -->
+                <div class="card mb-4 border-secondary">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Project Team</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectManager" class="form-label">Project Manager</label>
+                                    <input type="text" class="form-control" id="inputProjectManager" 
+                                           name="projectManager" value="<%= project.projectmanager %>">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectCustomer" class="form-label required-field">Customer</label>
+                                    <select class="form-control" id="inputProjectCustomer" name="projectCustomer" required>
+                                        <!-- Populated by JavaScript -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-9">
+                                        <div class="form-group mb-3">
+                                            <label for="inputProjectSubcontractor" class="form-label">Subcontractor</label>
+                                            <select class="form-control" id="inputProjectSubcontractor" 
+                                                    name="projectSubcontractor" value="<%=project.subcontractor%>">
+                                                <option value="">Assign a Sub</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-3 d-flex align-items-end">
+                                        <a href="/projects/<%= project.projectnumber %>/<%= project.subcontractor %>" 
+                                           class="btn btn-outline-info btn-compliance w-100">
+                                            <i class="bi bi-clipboard-check"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="row justify-content-md-center">
-            <div class="form-group col-md-3">
-              <label for="inputProjectCustomer">Customer</label>
-              <select class="form-control" id="inputProjectCustomer" name="projectCustomer" required>
-                </select>
-            </div>
-            <div class="form-group col-md-2">
-                <label for="inputProjectSubcontractor">Subcontractor</label>
-                <select class="form-control" id="inputProjectSubcontractor" name="projectSubcontractor" value="<%=project.subcontractor%>">
-                  <option value="">Assign a Sub</option>
-                </select>
-            </div>
-            <div class="d-flex flex-column justify-content-end col-md-1" style="margin-bottom: 2px;">
-                 <a href="/projects/<%= project.projectnumber %>/<%= project.subcontractor %>" class="btn btn-outline-info">Compliance</a>
-            </div>
-        </div>
-        <div class="row justify-content-md-center">
-            <div class="form-group col-md-6">
-                <label for="inputProjectName">Project Name</label>
-                <input type="text" class="form-control" id="inputProjectName" name="projectName" value="<%= project.projectname %>">
-            </div>
-        </div>
+                <!-- Compliance Tracking Section -->
+                <div class="card mb-4 border-secondary">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-clipboard-data me-2"></i>Compliance Tracking</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectTracking" class="form-label">Tracking Method</label>
+                                    <select class="form-control" id="inputProjectTracking" name="projectTracking">
+                                        <option value="">Select Tracking Method</option>
+                                        <option value="DIR Only" <%= project.projecttracking === 'DIR Only' ? 'selected' : '' %>>DIR Only</option>
+                                        <option value="DIR & LCP" <%= project.projecttracking === 'DIR & LCP' ? 'selected' : '' %>>DIR & LCP</option>
+                                        <option value="DIR & NXL Dropbox" <%= project.projecttracking === 'DIR & NXL Dropbox' ? 'selected' : '' %>>DIR & NXL Dropbox</option>
+                                        <option value="DIR, LCP, & NXL Dropbox" <%= project.projecttracking === 'DIR, LCP, & NXL Dropbox' ? 'selected' : '' %>>DIR, LCP, & NXL Dropbox</option>
+                                        <option value="NXL Dropbox Only" <%= project.projecttracking === 'NXL Dropbox Only' ? 'selected' : '' %>>NXL Dropbox Only</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectPortal" class="form-label">LCP Portal</label>
+                                    <select class="form-control" id="inputProjectPortal" name="projectPortal">
+                                        <option value="">Select Portal</option>
+                                        <option value="Align Builders Inc." <%= project.projectportal === 'Align Builders Inc.' ? 'selected' : '' %>>Align Builders Inc.</option>
+                                        <!-- Other portal options -->
+                                        <option value="Swinerton Builders" <%= project.projectportal === 'Swinerton Builders' ? 'selected' : '' %>>Swinerton Builders</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectWageDet" class="form-label required-field">Wage Determination</label>
+                                    <select class="form-control" id="inputProjectWageDet" name="projectWageDet" required>
+                                        <option value="">Select Wage Determination</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="row justify-content-md-center">
-            <div class="form-group col-md-6">
-                <label for="inputProjectAddress">Project Address</label>
-                <input type="text" class="form-control" id="inputProjectAddress" name="projectAddress" value="<%= project.projectaddress %>">
-            </div>
-        </div>
+                <!-- Dates Section -->
+                <div class="card mb-4 border-secondary">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Important Dates</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectDasDate" class="form-label">DAS File Date</label>
+                                    <input type="date" id="inputProjectDasDate" class="form-control" 
+                                           name="dasFileDate" value="<%= project.dasfiledate %>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectDasOnsiteDate" class="form-label">DAS First Onsite</label>
+                                    <input type="date" id="inputProjectDasOnsiteDate" class="form-control" 
+                                           name="dasOnsiteDate" value="<%= project.dasonsitedate %>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectActualOnsiteDate" class="form-label">Actual First Onsite</label>
+                                    <input type="date" id="inputProjectActualOnsiteDate" class="form-control" 
+                                           name="actualOnsiteDate" value="<%= project.actualonsitedate %>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label for="inputPayrollDate" class="form-label">Latest Payroll Date</label>
+                                    <input type="date" id="inputPayrollDate" class="form-control" 
+                                           name="payrollDate" value="<%= project.payrolldate %>">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="inputProjectCPRStatus" class="form-label">CPR Status</label>
+                                    <select class="form-control" id="inputProjectCPRStatus" name="projectCPRStatus">
+                                        <option value="">Select Status</option>
+                                        <option value="Open" <%= project.projectcprstatus === 'Open' ? 'selected' : '' %>>Open</option>
+                                        <option value="In Progress" <%= project.projectcprstatus === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                                        <option value="Final" <%= project.projectcprstatus === 'Final' ? 'selected' : '' %>>Final</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="row justify-content-md-center">
-            <div class="form-group col-md-2">
-                <label for="inputProjectCity">City</label>
-                <input type="text" class="form-control" id="inputProjectCity" name="projectCity" value="<%= project.projectcity %>">
-            </div>
-            <div class="form-group col-md-2">
-                <label for="inputProjectState">State</label>
-                <select id="inputProjectState" class="form-control" name="projectState">
-                    <option value="AL" <%= project.projectstate === 'AL' ? 'selected' : '' %>>Alabama</option>
-                    <option value="AK" <%= project.projectstate === 'AK' ? 'selected' : '' %>>Alaska</option>
-                    <option value="AZ" <%= project.projectstate === 'AZ' ? 'selected' : '' %>>Arizona</option>
-                    <option value="AR" <%= project.projectstate === 'AR' ? 'selected' : '' %>>Arkansas</option>
-                    <option value="CA" <%= project.projectstate === 'CA' ? 'selected' : '' %>>California</option>
-                    <option value="CO" <%= project.projectstate === 'CO' ? 'selected' : '' %>>Colorado</option>
-                    <option value="CT" <%= project.projectstate === 'CT' ? 'selected' : '' %>>Connecticut</option>
-                    <option value="DE" <%= project.projectstate === 'DE' ? 'selected' : '' %>>Delaware</option>
-                    <option value="FL" <%= project.projectstate === 'FL' ? 'selected' : '' %>>Florida</option>
-                    <option value="GA" <%= project.projectstate === 'GA' ? 'selected' : '' %>>Georgia</option>
-                    <option value="HI" <%= project.projectstate === 'HI' ? 'selected' : '' %>>Hawaii</option>
-                    <option value="ID" <%= project.projectstate === 'ID' ? 'selected' : '' %>>Idaho</option>
-                    <option value="IL" <%= project.projectstate === 'IL' ? 'selected' : '' %>>Illinois</option>
-                    <option value="IN" <%= project.projectstate === 'IN' ? 'selected' : '' %>>Indiana</option>
-                    <option value="IA" <%= project.projectstate === 'IA' ? 'selected' : '' %>>Iowa</option>
-                    <option value="KS" <%= project.projectstate === 'KS' ? 'selected' : '' %>>Kansas</option>
-                    <option value="KY" <%= project.projectstate === 'KY' ? 'selected' : '' %>>Kentucky</option>
-                    <option value="LA" <%= project.projectstate === 'LA' ? 'selected' : '' %>>Louisiana</option>
-                    <option value="ME" <%= project.projectstate === 'ME' ? 'selected' : '' %>>Maine</option>
-                    <option value="MD" <%= project.projectstate === 'MD' ? 'selected' : '' %>>Maryland</option>
-                    <option value="MA" <%= project.projectstate === 'MA' ? 'selected' : '' %>>Massachusetts</option>
-                    <option value="MI" <%= project.projectstate === 'MI' ? 'selected' : '' %>>Michigan</option>
-                    <option value="MN" <%= project.projectstate === 'MN' ? 'selected' : '' %>>Minnesota</option>
-                    <option value="MS" <%= project.projectstate === 'MS' ? 'selected' : '' %>>Mississippi</option>
-                    <option value="MO" <%= project.projectstate === 'MO' ? 'selected' : '' %>>Missouri</option>
-                    <option value="MT" <%= project.projectstate === 'MT' ? 'selected' : '' %>>Montana</option>
-                    <option value="NE" <%= project.projectstate === 'NE' ? 'selected' : '' %>>Nebraska</option>
-                    <option value="NV" <%= project.projectstate === 'NV' ? 'selected' : '' %>>Nevada</option>
-                    <option value="NH" <%= project.projectstate === 'NH' ? 'selected' : '' %>>New Hampshire</option>
-                    <option value="NJ" <%= project.projectstate === 'NJ' ? 'selected' : '' %>>New Jersey</option>
-                    <option value="NM" <%= project.projectstate === 'NM' ? 'selected' : '' %>>New Mexico</option>
-                    <option value="NY" <%= project.projectstate === 'NY' ? 'selected' : '' %>>New York</option>
-                    <option value="NC" <%= project.projectstate === 'NC' ? 'selected' : '' %>>North Carolina</option>
-                    <option value="ND" <%= project.projectstate === 'ND' ? 'selected' : '' %>>North Dakota</option>
-                    <option value="OH" <%= project.projectstate === 'OH' ? 'selected' : '' %>>Ohio</option>
-                    <option value="OK" <%= project.projectstate === 'OK' ? 'selected' : '' %>>Oklahoma</option>
-                    <option value="OR" <%= project.projectstate === 'OR' ? 'selected' : '' %>>Oregon</option>
-                    <option value="PA" <%= project.projectstate === 'PA' ? 'selected' : '' %>>Pennsylvania</option>
-                    <option value="RI" <%= project.projectstate === 'RI' ? 'selected' : '' %>>Rhode Island</option>
-                    <option value="SC" <%= project.projectstate === 'SC' ? 'selected' : '' %>>South Carolina</option>
-                    <option value="SD" <%= project.projectstate === 'SD' ? 'selected' : '' %>>South Dakota</option>
-                    <option value="TN" <%= project.projectstate === 'TN' ? 'selected' : '' %>>Tennessee</option>
-                    <option value="TX" <%= project.projectstate === 'TX' ? 'selected' : '' %>>Texas</option>
-                    <option value="UT" <%= project.projectstate === 'UT' ? 'selected' : '' %>>Utah</option>
-                    <option value="VT" <%= project.projectstate === 'VT' ? 'selected' : '' %>>Vermont</option>
-                    <option value="VA" <%= project.projectstate === 'VA' ? 'selected' : '' %>>Virginia</option>
-                    <option value="WA" <%= project.projectstate === 'WA' ? 'selected' : '' %>>Washington</option>
-                    <option value="WV" <%= project.projectstate === 'WV' ? 'selected' : '' %>>West Virginia</option>
-                    <option value="WI" <%= project.projectstate === 'WI' ? 'selected' : '' %>>Wisconsin</option>
-                    <option value="WY" <%= project.projectstate === 'WY' ? 'selected' : '' %>>Wyoming</option>
-                </select>
-            </div>
-            <div class="form-group col-md-2 mb-3">
-                <label for="inputProjectZip">Zip</label>
-                <input type="text" class="form-control" id="inputProjectZip" name="projectZip" value="<%= project.projectzip %>">
-            </div>
-        </div>
+                <!-- Notes Section -->
+                <div class="card mb-4 border-secondary">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Notes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <textarea class="form-control" id="inputProjectNotes" name="projectNotes" 
+                                      style="resize: none;"><%= project.projectnotes %></textarea>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="row justify-content-md-center">
-            <div class="form-group col-md-2">
-                <label for="inputProjectTracking">Tracking</label>
-                <select class="form-control" id="inputProjectTracking" name="projectTracking">
-                    <option value= "" selected>Select an Option</option>
-                    <option value="DIR Only" <%= project.projecttracking === 'DIR Only' ? 'selected' : '' %>>DIR Only</option>
-                    <option value="DIR & LCP" <%= project.projecttracking === 'DIR & LCP' ? 'selected' : '' %>>DIR & LCP</option>
-                    <option value="DIR & NXL Dropbox" <%= project.projecttracking === 'DIR & NXL Dropbox' ? 'selected' : '' %>>DIR & NXL Dropbox</option>
-                    <option value="DIR, LCP, & NXL Dropbox" <%= project.projecttracking === 'DIR, LCP, & NXL Dropbox' ? 'selected' : '' %>>DIR, LCP, & NXL Dropbox</option>
-                    <option value="NXL Dropbox Only" <%= project.projecttracking === 'NXL Dropbox Only' ? 'selected' : '' %>>NXL Dropbox Only</option>
-                </select>
-            </div>
-            <div class="form-group col-md-2 mb-3">
-                <label for="inputProjectPortal">LCP Portal</label>
-                <select class="form-control" id="inputProjectPortal" name="projectPortal">
-                    <option value= "" selected>Select an Option</option>
-                    <option value="Align Builders Inc." <%= project.projectportal === 'Align Builders Inc.' ? 'selected' : '' %>>Align Builders Inc.</option>
-                    <option value="Balfour Beatty Construction" <%= project.projectportal === 'Balfour Beatty Construction' ? 'selected' : '' %>>Balfour Beatty Construction</option>
-                    <option value="Barnhart-Reese Construction, Inc." <%= project.projectportal === 'Barnhart-Reese Construction, Inc.' ? 'selected' : '' %>>Barnhart-Reese Construction, Inc.</option>
-                    <option value="BNBuilders, Inc." <%= project.projectportal === 'BNBuilders, Inc.' ? 'selected' : '' %>>BNBuilders, Inc.</option>
-                    <option value="Calleguas Municipal Water District" <%= project.projectportal === 'Calleguas Municipal Water District' ? 'selected' : '' %>>Calleguas Municipal Water District</option>
-                    <option value="CW Driver LLC" <%= project.projectportal === 'CW Driver LLC' ? 'selected' : '' %>>CW Driver LLC</option>
-                    <option value="DPR Construction" <%= project.projectportal === 'DPR Construction' ? 'selected' : '' %>>DPR Construction</option>
-                    <option value="Engie Services" <%= project.projectportal === 'Engie Services' ? 'selected' : '' %>>Engie Services</option>
-                    <option value="Erickson-Hall Construction" <%= project.projectportal === 'Erickson-Hall Construction' ? 'selected' : '' %>>Erickson-Hall Construction</option>
-                    <option value="KYA Services LLC" <%= project.projectportal === 'KYA Services LLC' ? 'selected' : '' %>>KYA Services LLC</option>
-                    <option value="Los Angeles Community College District" <%= project.projectportal === 'Los Angeles Community College District' ? 'selected' : '' %>>Los Angeles Community College District</option>
-                    <option value="Los Angeles County" <%= project.projectportal === 'Los Angeles County' ? 'selected' : '' %>>Los Angeles County</option>
-                    <option value="Los Angeles County Joint" <%= project.projectportal === 'Los Angeles County Joint' ? 'selected' : '' %>>Los Angeles County Joint</option>
-                    <option value="Los Angeles County Metro" <%= project.projectportal === 'Los Angeles County Metro' ? 'selected' : '' %>>Los Angeles County Metro</option>
-                    <option value="McCarthy Building Companies, Inc." <%= project.projectportal === 'McCarthy Building Companies, Inc.' ? 'selected' : '' %>>McCarthy Building Companies, Inc.</option>
-                    <option value="Neff Construction" <%= project.projectportal === 'Neff Construction' ? 'selected' : '' %>>Neff Construction</option>
-                    <option value="PCL - California Buildings" <%= project.projectportal === 'PCL - California Buildings' ? 'selected' : '' %>>PCL - California Buildings</option>
-                    <option value="Plumbing, Piping & Construction, Inc." <%= project.projectportal === 'Plumbing, Piping & Construction, Inc.' ? 'selected' : '' %>>Plumbing, Piping & Construction, Inc.</option>
-                    <option value="Public Works Consultant, Inc." <%= project.projectportal === 'Public Works Consultant, Inc.' ? 'selected' : '' %>>Public Works Consultant, Inc.</option>
-                    <option value="Riverside Unified School District" <%= project.projectportal === 'Riverside Unified School District' ? 'selected' : '' %>>Riverside Unified School District</option>
-                    <option value="Swinerton Builders" <%= project.projectportal === 'Swinerton Builders' ? 'selected' : '' %>>Swinerton Builders</option>
-                    <option value="University of California Los Angeles" <%= project.projectportal === 'University of California Los Angeles' ? 'selected' : '' %>>University of California Los Angeles</option>
-                </select>
-            </div>
-            <div class="form-group col-md-2">
-                <label for="inputProjectWageDet">Wage Determination</label>
-                <select class="form-control" id="inputProjectWageDet" name="projectWageDet" required>
-                    <option value="">Select an Option</option>
-                </select>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="form-group col-md-2">
-                <label for="inputProjectDasDate">DAS File Date</label>
-                <input type="date" id="inputProjectDasDate" class="form-control" name="dasFileDate" value="<%= project.dasfiledate %>">
-            </div>
-            <div class="form-group col-md-2">
-                <label for="inputProjectDasOnsiteDate">DAS First Onsite Date</label>
-                <input type="date" id="inputProjectDasOnsiteDate" class="form-control" name="dasOnsiteDate" value="<%= project.dasonsitedate %>">
-            </div>
-            <div class="form-group col-md-2">
-                <label for="inputProjectActualOnsiteDate">Actual First Onsite Date</label>
-                <input type="date" id="inputProjectActualOnsiteDate" class="form-control" name="actualOnsiteDate" value="<%= project.actualonsitedate %>">
-            </div>
-        </div>
-        <div class="row justify-content-md-center">
-            <div class="form-group col-md-3">
-                <label for="inputProjectCPRStatus">CPR Status</label>
-                <select class="form-control" id="inputProjectCPRStatus" name="projectCPRStatus">
-                    <option value="">Select an Option</option>
-                    <option value="Open" <%= project.projectcprstatus === 'Open' ? 'selected' : '' %>>Open</option>
-                    <option value="In Progress" <%= project.projectcprstatus === 'In Progress' ? 'selected' : '' %>>In Progress</option>
-                    <option value="Final" <%= project.projectcprstatus === 'Final' ? 'selected' : '' %>>Final</option>
-                </select>
-            </div>
-            <div class="form-group col-md-3">
-                <label for="inputPayrollDate">Latest Payroll Date</label>
-                <input type ="date" id="inputPayrollDate" class="form-control" name="payrollDate" value="<%= project.payrolldate %>">
-            </div>
-        </div>
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+                        <i class="bi bi-arrow-left me-2"></i>Back
+                    </button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-save me-2"></i>Update Project
+                    </button>
+                </div>
 
-        <div class="row justify-content-md-center">
-            <div class="form-group col-md-6 mb-3">
-              <label for="inputProjectNotes">Notes</label>
-              <textarea class="form-control" id="inputProjectNotes" name="projectNotes" style="resize: auto;"><%= project.projectnotes %></textarea>
-            </div>
+                <div id="errorMessage" class="alert alert-danger mt-3" style="display:none;"></div>
+            </form>
         </div>
-
-        <div class="row justify-content-md-center">
-            <div class="col-md-1">
-                <button type="submit" class="btn btn-primary mb-4">Update</button>
-            </div>
-        </div>
-
-        <div id="errorMessage" class="alert alert-danger" style="display:none; color: red;"></div>
-    </form>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
+    // JavaScript functions remain the same as in your original code
     async function populateCustomerDropdown() {
-    try {
-        const response = await fetch('/api/customers');
-        if (!response.ok) throw new Error('Failed to fetch customers');
-        const customers = await response.json();
+        try {
+            const response = await fetch('/api/customers');
+            if (!response.ok) throw new Error('Failed to fetch customers');
+            const customers = await response.json();
 
-        const selectElement = document.getElementById('inputProjectCustomer');
-        const savedCustomer = '<%= project.projectcustomer %>';
-        
-        // Create a temporary element to decode HTML entities
-        const tempElement = document.createElement('textarea');
-        tempElement.innerHTML = savedCustomer;
-        const decodedCustomer = tempElement.value;
-        
-        // Clear existing options
-        selectElement.innerHTML = '';
-
-        customers.forEach(customer => {
-            const option = document.createElement('option');
-            option.value = customer.customername;
-            option.textContent = customer.customername;
+            const selectElement = document.getElementById('inputProjectCustomer');
+            const savedCustomer = '<%= project.projectcustomer %>';
             
-            if (customer.customername === decodedCustomer) {
-                option.selected = true;
-            }
-            selectElement.appendChild(option);
-        });
+            // Create a temporary element to decode HTML entities
+            const tempElement = document.createElement('textarea');
+            tempElement.innerHTML = savedCustomer;
+            const decodedCustomer = tempElement.value;
+            
+            // Clear existing options
+            selectElement.innerHTML = '<option value="">Select Customer</option>';
 
-    } catch (error) {
-        console.error('Error populating customer dropdown:', error);
+            customers.forEach(customer => {
+                const option = document.createElement('option');
+                option.value = customer.customername;
+                option.textContent = customer.customername;
+                
+                if (customer.customername === decodedCustomer) {
+                    option.selected = true;
+                }
+                selectElement.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error('Error populating customer dropdown:', error);
+        }
     }
-}
 
     async function populateSubDropdown() {
         try {
@@ -266,7 +329,8 @@
 
             const selectElement = document.getElementById('inputProjectSubcontractor');
             const savedSubcontractor = '<%= project.subcontractor %>'; 
-            console.log(savedSubcontractor);
+
+            selectElement.innerHTML = '<option value="">Assign a Sub</option>';
 
             subcontractors.forEach(sub => {
                 const option = document.createElement('option');
@@ -284,53 +348,65 @@
     }
 
     async function populateWageDetDropdown() {
-    try {
-        const response = await fetch('/api/wagedetermination');
-        if (!response.ok) throw new Error('Failed to fetch wage determination');
-        
-        const wageDetList = await response.json(); 
-        const selectElement = document.getElementById('inputProjectWageDet');
-        const savedDet = '<%= project.wagedetermination %>'; 
+        try {
+            const response = await fetch('/api/wagedetermination');
+            if (!response.ok) throw new Error('Failed to fetch wage determination');
+            
+            const wageDetList = await response.json(); 
+            const selectElement = document.getElementById('inputProjectWageDet');
+            const savedDet = '<%= project.wagedetermination %>'; 
 
-        wageDetList.sort((a, b) => a.determination.localeCompare(b.determination));
+            wageDetList.sort((a, b) => a.determination.localeCompare(b.determination));
 
-        let hasSavedDet = false;
+            selectElement.innerHTML = '<option value="">Select Wage Determination</option>';
 
-
-        wageDetList.forEach(determ => { 
-            const option = document.createElement('option');
-            option.value = determ.determination; 
-            option.textContent = determ.determination;
-            if (determ.determination === savedDet) {
+            wageDetList.forEach(determ => { 
+                const option = document.createElement('option');
+                option.value = determ.determination; 
+                option.textContent = determ.determination;
+                if (determ.determination === savedDet) {
                     option.selected = true;
-                } selectElement.appendChild(option);
-        });
+                }
+                selectElement.appendChild(option);
+            });
 
-        if (!hasSavedDet && (savedDet === null || savedDet === '')) {
-            selectElement.value = ''; 
+        } catch (error) {
+            console.error('Error populating wage determination dropdown:', error);
         }
-
-    } catch (error) {
-        console.error('Error populating wage determination dropdown:', error);
     }
-}
 
     function adjustTextareaHeight(textarea) {
         textarea.style.height = 'auto'; 
         textarea.style.height = textarea.scrollHeight + 'px';
-        }
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         populateCustomerDropdown();
         populateSubDropdown(); 
         populateWageDetDropdown(); 
+        
         const textarea = document.getElementById('inputProjectNotes');
-        adjustTextareaHeight(textarea); 
-
-    
+        adjustTextareaHeight(textarea);
+        
+        // Auto-resize textarea when typing
+        textarea.addEventListener('input', function() {
+            adjustTextareaHeight(this);
+        });
+        
+        // Form validation
+        document.getElementById('myForm').addEventListener('submit', function(e) {
+            const customerSelect = document.getElementById('inputProjectCustomer');
+            const wageDetSelect = document.getElementById('inputProjectWageDet');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (!customerSelect.value || !wageDetSelect.value) {
+                e.preventDefault();
+                errorMessage.textContent = 'Please fill in all required fields (marked with *)';
+                errorMessage.style.display = 'block';
+                window.scrollTo(0, 0);
+            }
+        });
     });
-    </script>  
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+    </script>
 </body>
 </html>

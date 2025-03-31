@@ -402,41 +402,92 @@ app.post("/admin/delete-user", async (req, res) => {
 
 //Handle Payroll Updates on Home/Compliance Tracker
 app.post("/update-payroll-date", async (req, res) => {
-  if (req.isAuthenticated()) {
-    const { projectNumber, newDate } = req.body;
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
 
-    try {
-      await db.query(
-        "UPDATE projects SET payrolldate = $1 WHERE projectnumber = $2",
-        [newDate, projectNumber]
-      );
-      res.status(200).send('Payroll date updated successfully');
-    } catch (err) {
-      console.error("Error updating payroll date:", err);
-      res.status(500).send("Failed to update payroll date");
+  const { projectNumber, payrolldate } = req.body;
+
+  // Validate input
+  if (!projectNumber || !payrolldate) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Project number and date are required' 
+    });
+  }
+
+  try {
+    const result = await db.query(
+      "UPDATE projects SET payrolldate = $1 WHERE projectnumber = $2 RETURNING *",
+      [payrolldate, projectNumber]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Project not found' 
+      });
     }
-  } else {
-    res.redirect("/");
+
+    const [year, month, day] = payrolldate.split('-');
+    const formattedDate = `${month}/${day}/${year}`;
+
+    res.json({ 
+      success: true,
+      projectNumber,
+      payrolldate,
+      formattedDate,
+      updatedRecord: result.rows[0]
+    });
+
+  } catch (err) {
+    console.error("Error updating payroll date:", err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error' 
+    });
   }
 });
 
-//Handle Sub Payroll Updates
 app.post('/update-subpayroll-date', async (req, res) => {
-  if (req.isAuthenticated()) {
-      const { projectNumber, newDate } = req.body;
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
 
-      try {
-          await db.query(
-              "UPDATE projects SET subpayroll = $1 WHERE projectnumber = $2",
-              [newDate, projectNumber]
-          );
-          res.status(200).send('Subpayroll date updated successfully');
-      } catch (err) {
-          console.error("Error updating subpayroll date:", err);
-          res.status(500).send("Failed to update subpayroll date");
-      }
-  } else {
-      res.redirect("/subcompliance");
+  const { projectNumber, subpayroll } = req.body;
+
+  if (!projectNumber || !subpayroll) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Project number and date are required' 
+    });
+  }
+
+  try {
+    // Store the date exactly as received (YYYY-MM-DD)
+    const result = await db.query(
+      "UPDATE projects SET subpayroll = $1 WHERE projectnumber = $2 RETURNING *",
+      [subpayroll, projectNumber]
+    );
+
+    // Simple formatting without timezone conversion (like your working payroll date)
+    const [year, month, day] = subpayroll.split('-');
+    const formattedDate = `${month}/${day}/${year}`;
+
+    res.json({ 
+      success: true,
+      projectNumber,
+      subpayroll, // Original YYYY-MM-DD format
+      formattedDate, // MM/DD/YYYY format
+      updatedRecord: result.rows[0]
+    });
+
+  } catch (err) {
+    console.error("Error updating subpayroll date:", err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error' 
+    });
   }
 });
 
