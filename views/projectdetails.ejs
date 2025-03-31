@@ -38,7 +38,7 @@
     </style>
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid content">
         <div class="content">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="mb-0">Project Details</h1>
@@ -48,7 +48,6 @@
             </div>
 
             <form action="/projects/<%= project.projectnumber %>" method="post" id="myForm">
-                <!-- Basic Information Section -->
                 <div class="card mb-4 border-secondary">
                     <div class="card-header bg-dark text-white">
                         <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Basic Information</h5>
@@ -186,31 +185,31 @@
                                 <div class="form-group mb-3">
                                     <label for="inputProjectPortal" class="form-label">LCP Portal</label>
                                     <select class="form-control" id="inputProjectPortal" name="projectPortal">
-                                        <option value="" selected>Select an Option</option>
-                                        <option value="Align Builders Inc.">Align Builders Inc.</option>
-                                        <option value="Balfour Beatty Construction">Balfour Beatty Construction</option>
-                                        <option value="Barnhart-Reese Construction, Inc.">Barnhart-Reese Construction, Inc.</option>
-                                        <option value="Bernards">Bernards</option>
-                                        <option value="BNBuilders, Inc.">BNBuilders, Inc.</option>
-                                        <option value="Bycor General Contractors">Bycor General Contractors</option>
-                                        <option value="Calleguas Municipal Water District">Calleguas Municipal Water District</option>
-                                        <option value="CW Driver LLC">CW Driver LLC</option>
-                                        <option value="DPR Construction">DPR Construction</option>
-                                        <option value="Engie Services">Engie Services</option>
-                                        <option value="Erickson-Hall Construction">Erickson-Hall Construction</option>
-                                        <option value="KYA Services LLC">KYA Services LLC</option>
-                                        <option value="Los Angeles Community College District">Los Angeles Community College District</option>
-                                        <option value="Los Angeles County">Los Angeles County</option>
-                                        <option value="Los Angeles County Joint">Los Angeles County Joint</option>
-                                        <option value="Los Angeles County Metro">Los Angeles County Metro</option>
-                                        <option value="McCarthy Building Companies, Inc.">McCarthy Building Companies, Inc.</option>
-                                        <option value="Neff Construction">Neff Construction</option>
-                                        <option value="PCL - California Buildings">PCL - California Buildings</option>
-                                        <option value="Plumbing, Piping & Construction, Inc.">Plumbing, Piping & Construction, Inc.</option>
-                                        <option value="Public Works Consultant, Inc.">Public Works Consultant, Inc.</option>
-                                        <option value="Riverside Unified School District">Riverside Unified School District</option>
-                                        <option value="Swinerton Builders">Swinerton Builders</option>
-                                        <option value="University of California Los Angeles">University of California Los Angeles</option>
+                                        <option value="">Select an Option</option>
+                                        <option value="Align Builders Inc." <%= project.projectportal === 'Align Builders Inc.' ? 'selected' : '' %>>Align Builders Inc.</option>
+                                        <option value="Balfour Beatty Construction" <%= project.projectportal === 'Balfour Beatty Construction' ? 'selected' : '' %>>Balfour Beatty Construction</option>
+                                        <option value="Barnhart-Reese Construction, Inc." <%= project.projectportal === 'Barnhart-Reese Construction, Inc.' ? 'selected' : '' %>>Barnhart-Reese Construction, Inc.</option>
+                                        <option value="Bernards" <%= project.projectportal === 'Bernards' ? 'selected' : '' %>>Bernards</option>
+                                        <option value="BNBuilders, Inc." <%= project.projectportal === 'BNBuilders, Inc.' ? 'selected' : '' %>>BNBuilders, Inc.</option>
+                                        <option value="Bycor General Contractors" <%= project.projectportal === 'Bycor General Contractors' ? 'selected' : '' %>>Bycor General Contractors</option>
+                                        <option value="Calleguas Municipal Water District" <%= project.projectportal === 'Calleguas Municipal Water District' ? 'selected' : '' %>>Calleguas Municipal Water District</option>
+                                        <option value="CW Driver LLC" <%= project.projectportal === 'CW Driver LLC' ? 'selected' : '' %>>CW Driver LLC</option>
+                                        <option value="DPR Construction" <%= project.projectportal === 'DPR Construction' ? 'selected' : '' %>>DPR Construction</option>
+                                        <option value="Engie Services" <%= project.projectportal === 'Engie Services' ? 'selected' : '' %>>Engie Services</option>
+                                        <option value="Erickson-Hall Construction" <%= project.projectportal === 'Erickson-Hall Construction' ? 'selected' : '' %>>Erickson-Hall Construction</option>
+                                        <option value="KYA Services LLC" <%= project.projectportal === 'KYA Services LLC' ? 'selected' : '' %>>KYA Services LLC</option>
+                                        <option value="Los Angeles Community College District" <%= project.projectportal === 'Los Angeles Community College District' ? 'selected' : '' %>>Los Angeles Community College District</option>
+                                        <option value="Los Angeles County" <%= project.projectportal === 'Los Angeles County' ? 'selected' : '' %>>Los Angeles County</option>
+                                        <option value="Los Angeles County Joint" <%= project.projectportal === 'Los Angeles County Joint' ? 'selected' : '' %>>Los Angeles County Joint</option>
+                                        <option value="Los Angeles County Metro" <%= project.projectportal === 'Los Angeles County Metro' ? 'selected' : '' %>>Los Angeles County Metro</option>
+                                        <option value="McCarthy Building Companies, Inc." <%= project.projectportal === 'McCarthy Building Companies, Inc.' ? 'selected' : '' %>>McCarthy Building Companies, Inc.</option>
+                                        <option value="Neff Construction" <%= project.projectportal === 'Neff Construction' ? 'selected' : '' %>>Neff Construction</option>
+                                        <option value="PCL - California Buildings" <%= project.projectportal === 'PCL - California Buildings' ? 'selected' : '' %>>PCL - California Buildings</option>
+                                        <option value="Plumbing, Piping & Construction, Inc." <%= project.projectportal === 'Plumbing, Piping & Construction, Inc.' ? 'selected' : '' %>>Plumbing, Piping & Construction, Inc.</option>
+                                        <option value="Public Works Consultant, Inc." <%= project.projectportal === 'Public Works Consultant, Inc.' ? 'selected' : '' %>>Public Works Consultant, Inc.</option>
+                                        <option value="Riverside Unified School District" <%= project.projectportal === 'Riverside Unified School District' ? 'selected' : '' %>>Riverside Unified School District</option>
+                                        <option value="Swinerton Builders" <%= project.projectportal === 'Swinerton Builders' ? 'selected' : '' %>>Swinerton Builders</option>
+                                        <option value="University of California Los Angeles" <%= project.projectportal === 'University of California Los Angeles' ? 'selected' : '' %>>University of California Los Angeles</option>
                                     </select>
                                 </div>
                             </div>
